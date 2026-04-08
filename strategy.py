@@ -137,22 +137,28 @@ class MultiTFStrategy:
         if direction == "SHORT" and trend_bullish:
             return None
 
-        # Rule 3: 15m must agree or be neutral — never enter against 15m
-        if signal_15m.get("direction") not in ("NONE", direction):
+        # Rule 3: 15m must CONFIRM — not just neutral
+        if signal_15m.get("direction") != direction:
             return None
 
-        # Rule 4: Need strong confluence from 5m
+        # Rule 4: 1H RSI must not be extreme (avoid entering at tops/bottoms)
+        trend_rsi = df_trend.iloc[-1].get("rsi", 50)
+        if direction == "LONG" and trend_rsi > 75:
+            return None  # too overbought on 1H to go long
+        if direction == "SHORT" and trend_rsi < 25:
+            return None  # too oversold on 1H to go short
+
+        # Rule 5: Need strong confluence from 5m + 15m + trend
         total_confluence = signal_5m.get("confluence", 0)
 
-        # Bonus: 15m confirms = +1
-        if signal_15m.get("direction") == direction:
-            total_confluence += 1
+        # Bonus: 15m confirms = +1 (already required above)
+        total_confluence += 1
 
         # Bonus: trend-aligned = +1
-        total_confluence += 1  # we already confirmed trend alignment above
+        total_confluence += 1
 
-        # Rule 5: Minimum 5 total confluence for entry
-        if total_confluence < 5:
+        # Rule 6: Minimum 6 total confluence for entry
+        if total_confluence < 6:
             return None
 
         entry_price = signal_5m.get("close", 0)

@@ -57,12 +57,12 @@ VOLUME_SPIKE_MULT = 1.2          # volume must be 1.2x average
 STOCH_RSI_PERIOD = 14
 
 # === Trade Management ===
-TP_ATR_MULT = 3.0               # take profit at 3x ATR
-SL_ATR_MULT = 1.5               # stop loss at 1.5x ATR (wider to avoid wicks)
-TRAILING_ACTIVATE_ATR = 1.5     # activate trailing stop at 1.5x ATR profit
-TRAILING_DISTANCE_ATR = 0.75    # trail at 0.75x ATR
-REWARD_RISK_RATIO = 1.5         # minimum R:R (3/1.5 = 2.0 actual)
-TIME_STOP_HOURS = 4             # close if no TP hit in 4 hours
+TP_ATR_MULT = 2.5               # take profit at 2.5x ATR (closer, more wins)
+SL_ATR_MULT = 2.0               # stop loss at 2x ATR (wider to survive wicks)
+TRAILING_ACTIVATE_ATR = 1.0     # activate trailing stop at 1x ATR profit (lock gains early)
+TRAILING_DISTANCE_ATR = 0.5     # trail at 0.5x ATR (tight trail once activated)
+REWARD_RISK_RATIO = 1.2         # minimum R:R
+TIME_STOP_HOURS = 6             # close if no TP hit in 6 hours
 
 # === Paper Trading ===
 PAPER_TRADE_LOG = "paper_trades.json"
