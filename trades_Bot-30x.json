@@ -3,47 +3,34 @@
   "leverage": 30,
   "trades": [
     {
-      "position_id": "Bot-30x_BTCUSDT_b60649e5",
+      "position_id": "Bot-30x_BTCUSDT_5619c96b",
       "symbol": "BTCUSDT",
       "direction": "LONG",
-      "entry_price": 71258.8,
-      "exit_price": 71246.4,
-      "qty": 0.009334079437112987,
-      "pnl": -0.7808200135211194,
-      "pnl_pct": -3.5217797661485495,
+      "entry_price": 71024.3,
+      "exit_price": 71061.6,
+      "qty": 0.012920021035402882,
+      "pnl": -0.4359596237965102,
+      "pnl_pct": -1.4252706468066745,
       "reason": "stop_loss",
-      "duration": 330.11768221855164,
-      "win": "False"
-    },
-    {
-      "position_id": "Bot-30x_ETHUSDT_206f7549",
-      "symbol": "ETHUSDT",
-      "direction": "LONG",
-      "entry_price": 2196.71,
-      "exit_price": 2196.67,
-      "qty": 0.17734164812159506,
-      "pnl": -0.396658290937084,
-      "pnl_pct": -3.054599833387152,
-      "reason": "stop_loss",
-      "duration": 586.754533290863,
+      "duration": 670.1182441711426,
       "win": "False"
     }
   ],
   "stats": {
     "bot_name": "Bot-30x",
     "leverage": 30,
-    "allocation": 162.63520086043826,
+    "allocation": 199.5640403762035,
     "initial_allocation": 200.0,
-    "pnl_total": -1.1774783044582033,
-    "pnl_pct": -0.5887391522291017,
-    "total_trades": 2,
+    "pnl_total": -0.4359596237965102,
+    "pnl_pct": -0.2179798118982551,
+    "total_trades": 1,
     "wins": 0,
-    "losses": 2,
+    "losses": 1,
     "win_rate": 0.0,
-    "open_positions": 2,
-    "daily_trades": 4,
-    "daily_pnl": -1.1774783044582033,
+    "open_positions": 0,
+    "daily_trades": 1,
+    "daily_pnl": -0.4359596237965102,
     "paused": false
   },
-  "saved_at": 1775688316.948419
+  "saved_at": 1775690685.6347258
 }

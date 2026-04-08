@@ -3,34 +3,34 @@
   "leverage": 50,
   "trades": [
     {
-      "position_id": "Bot-50x_BTCUSDT_1f1e48b2",
+      "position_id": "Bot-50x_BTCUSDT_f2383291",
       "symbol": "BTCUSDT",
       "direction": "LONG",
-      "entry_price": 71258.8,
-      "exit_price": 71251.2,
-      "qty": 0.009748352319278277,
-      "pnl": -0.7687063221367453,
-      "pnl_pct": -5.533000836388335,
+      "entry_price": 71024.3,
+      "exit_price": 71057.1,
+      "qty": 0.012920021035402882,
+      "pnl": -0.4940706484084935,
+      "pnl_pct": -2.692085666454798,
       "reason": "stop_loss",
-      "duration": 336.703665971756,
+      "duration": 664.6486539840698,
       "win": "False"
     }
   ],
   "stats": {
     "bot_name": "Bot-50x",
     "leverage": 50,
-    "allocation": 167.53737628621633,
+    "allocation": 199.5059293515915,
     "initial_allocation": 200.0,
-    "pnl_total": -0.7687063221367453,
-    "pnl_pct": -0.38435316106837264,
+    "pnl_total": -0.4940706484084935,
+    "pnl_pct": -0.24703532420424673,
     "total_trades": 1,
     "wins": 0,
     "losses": 1,
     "win_rate": 0.0,
-    "open_positions": 3,
-    "daily_trades": 4,
-    "daily_pnl": -0.7687063221367453,
+    "open_positions": 0,
+    "daily_trades": 1,
+    "daily_pnl": -0.4940706484084935,
     "paused": false
   },
-  "saved_at": 1775688316.950342
+  "saved_at": 1775690685.635753
 }

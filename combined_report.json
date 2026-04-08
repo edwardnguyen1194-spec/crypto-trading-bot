@@ -4,27 +4,27 @@
     {
       "bot_name": "Bot-20x",
       "leverage": 20,
-      "allocation": 131.6937947818057,
+      "allocation": 199.56533173230588,
       "initial_allocation": 200.0,
-      "pnl_total": -0.8388373063680901,
-      "pnl_pct": -0.41941865318404503,
+      "pnl_total": -0.43466826769413436,
+      "pnl_pct": -0.21733413384706718,
       "total_trades": 1,
       "wins": 0,
       "losses": 1,
       "win_rate": 0.0,
-      "open_positions": 3,
-      "daily_trades": 4,
-      "daily_pnl": -0.8388373063680901,
+      "open_positions": 0,
+      "daily_trades": 1,
+      "daily_pnl": -0.43466826769413436,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": -0.8388373063680901,
+      "avg_loss": -0.43466826769413436,
       "profit_factor": 0.0,
-      "max_drawdown": 0.8388373063680901,
+      "max_drawdown": 0.43466826769413436,
       "trades_by_symbol": {
         "BTCUSDT": {
           "total": 1,
           "wins": 0,
-          "pnl": -0.8388373063680901,
+          "pnl": -0.43466826769413436,
           "win_rate": 0.0
         }
       },
@@ -38,39 +38,33 @@
     {
       "bot_name": "Bot-30x",
       "leverage": 30,
-      "allocation": 162.63520086043826,
+      "allocation": 199.5640403762035,
       "initial_allocation": 200.0,
-      "pnl_total": -1.1774783044582033,
-      "pnl_pct": -0.5887391522291017,
-      "total_trades": 2,
+      "pnl_total": -0.4359596237965102,
+      "pnl_pct": -0.2179798118982551,
+      "total_trades": 1,
       "wins": 0,
-      "losses": 2,
+      "losses": 1,
       "win_rate": 0.0,
-      "open_positions": 2,
-      "daily_trades": 4,
-      "daily_pnl": -1.1774783044582033,
+      "open_positions": 0,
+      "daily_trades": 1,
+      "daily_pnl": -0.4359596237965102,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": -0.5887391522291017,
+      "avg_loss": -0.4359596237965102,
       "profit_factor": 0.0,
-      "max_drawdown": 1.1774783044582033,
+      "max_drawdown": 0.4359596237965102,
       "trades_by_symbol": {
         "BTCUSDT": {
           "total": 1,
           "wins": 0,
-          "pnl": -0.7808200135211194,
-          "win_rate": 0.0
-        },
-        "ETHUSDT": {
-          "total": 1,
-          "wins": 0,
-          "pnl": -0.396658290937084,
+          "pnl": -0.4359596237965102,
           "win_rate": 0.0
         }
       },
       "trades_by_reason": {
         "stop_loss": {
-          "total": 2,
+          "total": 1,
           "wins": 0
         }
       }
@@ -78,27 +72,27 @@
     {
       "bot_name": "Bot-40x",
       "leverage": 40,
-      "allocation": 160.4720441081661,
+      "allocation": 199.5059293515915,
       "initial_allocation": 200.0,
-      "pnl_total": -0.9606847483950482,
-      "pnl_pct": -0.4803423741975241,
+      "pnl_total": -0.4940706484084935,
+      "pnl_pct": -0.24703532420424673,
       "total_trades": 1,
       "wins": 0,
       "losses": 1,
       "win_rate": 0.0,
-      "open_positions": 3,
-      "daily_trades": 4,
-      "daily_pnl": -0.9606847483950482,
+      "open_positions": 0,
+      "daily_trades": 1,
+      "daily_pnl": -0.4940706484084935,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": -0.9606847483950482,
+      "avg_loss": -0.4940706484084935,
       "profit_factor": 0.0,
-      "max_drawdown": 0.9606847483950482,
+      "max_drawdown": 0.4940706484084935,
       "trades_by_symbol": {
         "BTCUSDT": {
           "total": 1,
           "wins": 0,
-          "pnl": -0.9606847483950482,
+          "pnl": -0.4940706484084935,
           "win_rate": 0.0
         }
       },
@@ -112,27 +106,27 @@
     {
       "bot_name": "Bot-50x",
       "leverage": 50,
-      "allocation": 167.53737628621633,
+      "allocation": 199.5059293515915,
       "initial_allocation": 200.0,
-      "pnl_total": -0.7687063221367453,
-      "pnl_pct": -0.38435316106837264,
+      "pnl_total": -0.4940706484084935,
+      "pnl_pct": -0.24703532420424673,
       "total_trades": 1,
       "wins": 0,
       "losses": 1,
       "win_rate": 0.0,
-      "open_positions": 3,
-      "daily_trades": 4,
-      "daily_pnl": -0.7687063221367453,
+      "open_positions": 0,
+      "daily_trades": 1,
+      "daily_pnl": -0.4940706484084935,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": -0.7687063221367453,
+      "avg_loss": -0.4940706484084935,
       "profit_factor": 0.0,
-      "max_drawdown": 0.7687063221367453,
+      "max_drawdown": 0.4940706484084935,
       "trades_by_symbol": {
         "BTCUSDT": {
           "total": 1,
           "wins": 0,
-          "pnl": -0.7687063221367453,
+          "pnl": -0.4940706484084935,
           "win_rate": 0.0
         }
       },
@@ -144,8 +138,8 @@
       }
     }
   ],
-  "total_cycles": 40,
-  "uptime_hours": 0.46229008277257283,
+  "total_cycles": 30,
+  "uptime_hours": 0.28713902976777816,
   "auto_tuner": {
     "level": 0,
     "level_name": "Normal",
@@ -168,5 +162,5 @@
     },
     "adjustments": 0
   },
-  "saved_at": 1775688316.9514759
+  "saved_at": 1775690685.6364312
 }
