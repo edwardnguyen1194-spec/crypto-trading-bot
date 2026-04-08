@@ -125,40 +125,34 @@ class MultiTFStrategy:
         # Get entry signal from 5m timeframe (BB + volume + stochRSI)
         signal_5m = get_signal_strength(df_entry)
 
-        # === Multi-TF Confluence Check ===
-        # Determine best direction from entry TF
+        # === HIGH WIN RATE STRATEGY ===
+        # Rule 1: 5m MUST have a signal — never enter blind
         direction = signal_5m.get("direction", "NONE")
-
-        # If 5m has no signal, check if 15m does and use trend direction
         if direction == "NONE":
-            if signal_15m.get("direction") != "NONE":
-                direction = signal_15m["direction"]
-            elif trend_bullish:
-                # In uptrend with no clear signal, look for long on pullback
-                direction = "LONG"
-            else:
-                direction = "SHORT"
+            return None
 
-        # Prefer trend-aligned trades, but allow counter-trend with higher confluence
-        with_trend = (direction == "LONG" and trend_bullish) or \
-                     (direction == "SHORT" and not trend_bullish)
+        # Rule 2: Direction MUST agree with 1H trend — never fight the trend
+        if direction == "LONG" and not trend_bullish:
+            return None
+        if direction == "SHORT" and trend_bullish:
+            return None
 
-        # Counter-trend needs extra confluence
-        min_confluence = 4 if with_trend else 5
+        # Rule 3: 15m must agree or be neutral — never enter against 15m
+        if signal_15m.get("direction") not in ("NONE", direction):
+            return None
 
-        # Combined confluence from entry TF
+        # Rule 4: Need strong confluence from 5m
         total_confluence = signal_5m.get("confluence", 0)
 
-        # Boost from trend alignment
-        if with_trend:
-            total_confluence += 1
-
-        # Boost from 15m alignment
+        # Bonus: 15m confirms = +1
         if signal_15m.get("direction") == direction:
             total_confluence += 1
 
-        # Check minimum confluence
-        if total_confluence < min_confluence:
+        # Bonus: trend-aligned = +1
+        total_confluence += 1  # we already confirmed trend alignment above
+
+        # Rule 5: Minimum 5 total confluence for entry
+        if total_confluence < 5:
             return None
 
         entry_price = signal_5m.get("close", 0)

@@ -1,22 +1,75 @@
 {
   "bot_name": "Bot-30x",
   "leverage": 30,
-  "trades": [],
+  "trades": [
+    {
+      "position_id": "Bot-30x_XRPUSDT_61b068c2",
+      "symbol": "XRPUSDT",
+      "direction": "LONG",
+      "entry_price": 1.3852,
+      "exit_price": 1.3831,
+      "qty": 456.83836269130813,
+      "pnl": -1.591693381370917,
+      "pnl_pct": -7.545805659832496,
+      "reason": "stop_loss",
+      "duration": 34.13135004043579,
+      "win": "False"
+    },
+    {
+      "position_id": "Bot-30x_XRPUSDT_0d963643",
+      "symbol": "XRPUSDT",
+      "direction": "LONG",
+      "entry_price": 1.3852,
+      "exit_price": 1.3831,
+      "qty": 256.97157901386083,
+      "pnl": -0.8953275270211408,
+      "pnl_pct": -7.545805659832496,
+      "reason": "stop_loss",
+      "duration": 0.27999377250671387,
+      "win": "False"
+    },
+    {
+      "position_id": "Bot-30x_XRPUSDT_540af998",
+      "symbol": "XRPUSDT",
+      "direction": "LONG",
+      "entry_price": 1.3852,
+      "exit_price": 1.3826,
+      "qty": 268.2866189559592,
+      "pnl": -1.0688270612586286,
+      "pnl_pct": -8.62814034074488,
+      "reason": "stop_loss",
+      "duration": 0.30344700813293457,
+      "win": "False"
+    },
+    {
+      "position_id": "Bot-30x_XRPUSDT_633992b8",
+      "symbol": "XRPUSDT",
+      "direction": "LONG",
+      "entry_price": 1.3852,
+      "exit_price": 1.3828,
+      "qty": 196.8746868421645,
+      "pnl": -0.7449738150107421,
+      "pnl_pct": -8.195206468379926,
+      "reason": "stop_loss",
+      "duration": 0.49803924560546875,
+      "win": "False"
+    }
+  ],
   "stats": {
     "bot_name": "Bot-30x",
     "leverage": 30,
-    "allocation": 200.0,
+    "allocation": 35.61646834682476,
     "initial_allocation": 200.0,
-    "pnl_total": 0,
-    "pnl_pct": 0.0,
-    "total_trades": 0,
+    "pnl_total": -4.300821784661428,
+    "pnl_pct": -2.150410892330714,
+    "total_trades": 4,
     "wins": 0,
-    "losses": 0,
-    "win_rate": 0,
-    "open_positions": 0,
-    "daily_trades": 0,
-    "daily_pnl": 0.0,
+    "losses": 4,
+    "win_rate": 0.0,
+    "open_positions": 6,
+    "daily_trades": 10,
+    "daily_pnl": -4.300821784661428,
     "paused": false
   },
-  "saved_at": 1775639807.9848871
+  "saved_at": 1775640167.208284
 }

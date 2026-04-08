@@ -61,6 +61,15 @@ class RiskManager:
         if positions_for_symbol >= config.MAX_CONCURRENT_POSITIONS:
             return False, f"Max concurrent positions ({config.MAX_CONCURRENT_POSITIONS}) for {symbol}"
 
+        # Cooldown after stop loss — wait 10 minutes before re-entering same symbol
+        import time as _time
+        for pid, pos in self.open_positions.items():
+            if (pos.get("symbol") == symbol and
+                pos.get("status") == "closed" and
+                pos.get("close_reason") == "stop_loss" and
+                _time.time() - pos.get("close_time", 0) < 600):
+                return False, f"Cooldown after stop loss on {symbol} (10 min)"
+
         # Check daily loss limit
         max_loss = self.initial_allocation * (config.MAX_DAILY_LOSS_PCT / 100)
         if self.daily_pnl <= -max_loss:

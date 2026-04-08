@@ -4,119 +4,163 @@
     {
       "bot_name": "Bot-20x",
       "leverage": 20,
-      "allocation": 200.0,
+      "allocation": 36.66129242188535,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
+      "pnl_total": -2.767678666077801,
+      "pnl_pct": -1.3838393330389005,
+      "total_trades": 4,
       "wins": 0,
-      "losses": 0,
-      "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "losses": 4,
+      "win_rate": 0.0,
+      "open_positions": 6,
+      "daily_trades": 10,
+      "daily_pnl": -2.767678666077801,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": 0,
-      "profit_factor": 0,
-      "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "avg_loss": -0.6919196665194502,
+      "profit_factor": 0.0,
+      "max_drawdown": 2.767678666077801,
+      "trades_by_symbol": {
+        "XRPUSDT": {
+          "total": 4,
+          "wins": 0,
+          "pnl": -2.767678666077801,
+          "win_rate": 0.0
+        }
+      },
+      "trades_by_reason": {
+        "stop_loss": {
+          "total": 4,
+          "wins": 0
+        }
+      }
     },
     {
       "bot_name": "Bot-30x",
       "leverage": 30,
-      "allocation": 200.0,
+      "allocation": 35.61646834682476,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
+      "pnl_total": -4.300821784661428,
+      "pnl_pct": -2.150410892330714,
+      "total_trades": 4,
       "wins": 0,
-      "losses": 0,
-      "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "losses": 4,
+      "win_rate": 0.0,
+      "open_positions": 6,
+      "daily_trades": 10,
+      "daily_pnl": -4.300821784661428,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": 0,
-      "profit_factor": 0,
-      "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "avg_loss": -1.075205446165357,
+      "profit_factor": 0.0,
+      "max_drawdown": 4.300821784661428,
+      "trades_by_symbol": {
+        "XRPUSDT": {
+          "total": 4,
+          "wins": 0,
+          "pnl": -4.300821784661428,
+          "win_rate": 0.0
+        }
+      },
+      "trades_by_reason": {
+        "stop_loss": {
+          "total": 4,
+          "wins": 0
+        }
+      }
     },
     {
       "bot_name": "Bot-40x",
       "leverage": 40,
-      "allocation": 200.0,
+      "allocation": 34.66770358164607,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
+      "pnl_total": -5.696875527954674,
+      "pnl_pct": -2.848437763977337,
+      "total_trades": 4,
       "wins": 0,
-      "losses": 0,
-      "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "losses": 4,
+      "win_rate": 0.0,
+      "open_positions": 6,
+      "daily_trades": 10,
+      "daily_pnl": -5.696875527954674,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": 0,
-      "profit_factor": 0,
-      "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "avg_loss": -1.4242188819886685,
+      "profit_factor": 0.0,
+      "max_drawdown": 5.696875527954674,
+      "trades_by_symbol": {
+        "XRPUSDT": {
+          "total": 4,
+          "wins": 0,
+          "pnl": -5.696875527954674,
+          "win_rate": 0.0
+        }
+      },
+      "trades_by_reason": {
+        "stop_loss": {
+          "total": 4,
+          "wins": 0
+        }
+      }
     },
     {
       "bot_name": "Bot-50x",
       "leverage": 50,
-      "allocation": 200.0,
+      "allocation": 40.45251557404059,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
+      "pnl_total": -7.577107018505162,
+      "pnl_pct": -3.7885535092525813,
+      "total_trades": 4,
       "wins": 0,
-      "losses": 0,
-      "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "losses": 4,
+      "win_rate": 0.0,
+      "open_positions": 6,
+      "daily_trades": 10,
+      "daily_pnl": -7.577107018505162,
       "paused": false,
       "avg_win": 0,
-      "avg_loss": 0,
-      "profit_factor": 0,
-      "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "avg_loss": -1.8942767546262904,
+      "profit_factor": 0.0,
+      "max_drawdown": 7.577107018505162,
+      "trades_by_symbol": {
+        "XRPUSDT": {
+          "total": 4,
+          "wins": 0,
+          "pnl": -7.577107018505162,
+          "win_rate": 0.0
+        }
+      },
+      "trades_by_reason": {
+        "stop_loss": {
+          "total": 4,
+          "wins": 0
+        }
+      }
     }
   ],
-  "total_cycles": 40,
-  "uptime_hours": 0.39555890136294897,
+  "total_cycles": 6,
+  "uptime_hours": 0.057129289706548056,
   "auto_tuner": {
-    "level": 0,
-    "level_name": "Normal",
+    "level": 1,
+    "level_name": "Tight",
     "settings": {
-      "name": "Normal",
+      "name": "Tight",
       "min_confluence": 4,
       "rsi_long": [
-        25,
-        50
+        28,
+        48
       ],
       "rsi_short": [
-        50,
-        75
+        52,
+        72
       ],
-      "bb_long_threshold": 0.3,
-      "bb_short_threshold": 0.7,
-      "volume_mult": 1.2,
-      "stoch_oversold": 0.35,
-      "stoch_overbought": 0.65
+      "bb_long_threshold": 0.25,
+      "bb_short_threshold": 0.75,
+      "volume_mult": 1.3,
+      "stoch_oversold": 0.3,
+      "stoch_overbought": 0.7
     },
-    "adjustments": 0
+    "adjustments": 1
   },
-  "saved_at": 1775639807.98617
+  "saved_at": 1775640167.208986
 }

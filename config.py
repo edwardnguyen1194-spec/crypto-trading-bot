@@ -28,7 +28,7 @@ TOTAL_BANKROLL = 800.0
 
 # === Risk Management ===
 RISK_PER_TRADE_PCT = 1.5        # % of bot allocation risked per trade
-MAX_CONCURRENT_POSITIONS = 2     # per bot per pair
+MAX_CONCURRENT_POSITIONS = 1     # per bot per pair (prevent stacking)
 MAX_DAILY_TRADES = 999           # unlimited trades per bot
 MAX_DAILY_LOSS_PCT = 10.0        # % of bot allocation, pause if hit
 REWARD_RISK_RATIO = 2.0          # minimum R:R for entries
@@ -57,10 +57,10 @@ VOLUME_SPIKE_MULT = 1.2          # volume must be 1.2x average
 STOCH_RSI_PERIOD = 14
 
 # === Trade Management ===
-TP_ATR_MULT = 1.5               # take profit at 1.5x ATR
-SL_ATR_MULT = 0.75              # stop loss at 0.75x ATR
+TP_ATR_MULT = 2.0               # take profit at 2x ATR
+SL_ATR_MULT = 1.5               # stop loss at 1.5x ATR (wider to avoid wicks)
 TRAILING_ACTIVATE_ATR = 1.0     # activate trailing stop at 1x ATR profit
-TRAILING_DISTANCE_ATR = 0.5     # trail at 0.5x ATR
+TRAILING_DISTANCE_ATR = 0.75    # trail at 0.75x ATR
 TIME_STOP_HOURS = 4             # close if no TP hit in 4 hours
 
 # === Paper Trading ===
