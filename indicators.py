@@ -184,7 +184,25 @@ def get_signal_strength(df: pd.DataFrame) -> dict:
         short_score += 1
         short_reasons.append("StochRSI overbought + bearish cross")
 
-    # Determine direction — need minimum 4/6 confluence
+    # 7. VWAP alignment
+    if last["above_vwap"] and last["trend_bullish"]:
+        long_score += 1
+        long_reasons.append("Price above VWAP in uptrend")
+    elif not last["above_vwap"] and not last["trend_bullish"]:
+        short_score += 1
+        short_reasons.append("Price below VWAP in downtrend")
+
+    # 8. Momentum — price making higher highs (last 3 candles)
+    if len(df) >= 4:
+        recent = df.iloc[-3:]
+        if recent["close"].is_monotonic_increasing:
+            long_score += 1
+            long_reasons.append("3-candle momentum up")
+        elif recent["close"].is_monotonic_decreasing:
+            short_score += 1
+            short_reasons.append("3-candle momentum down")
+
+    # Determine direction — need minimum 4/8 confluence
     min_confluence = 4
 
     if long_score >= min_confluence and long_score > short_score:

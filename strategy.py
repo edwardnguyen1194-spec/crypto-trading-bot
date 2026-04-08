@@ -126,30 +126,39 @@ class MultiTFStrategy:
         signal_5m = get_signal_strength(df_entry)
 
         # === Multi-TF Confluence Check ===
-        # We need agreement across timeframes
-        if signal_5m["direction"] == "NONE":
-            return None
+        # Determine best direction from entry TF
+        direction = signal_5m.get("direction", "NONE")
 
-        # Direction must agree with trend
-        direction = signal_5m["direction"]
-        if direction == "LONG" and not trend_bullish:
-            return None
-        if direction == "SHORT" and trend_bullish:
-            return None
+        # If 5m has no signal, check if 15m does and use trend direction
+        if direction == "NONE":
+            if signal_15m.get("direction") != "NONE":
+                direction = signal_15m["direction"]
+            elif trend_bullish:
+                # In uptrend with no clear signal, look for long on pullback
+                direction = "LONG"
+            else:
+                direction = "SHORT"
 
-        # Signal timeframe should agree or be neutral
-        if signal_15m["direction"] != "NONE" and signal_15m["direction"] != direction:
-            return None
+        # Prefer trend-aligned trades, but allow counter-trend with higher confluence
+        with_trend = (direction == "LONG" and trend_bullish) or \
+                     (direction == "SHORT" and not trend_bullish)
+
+        # Counter-trend needs extra confluence
+        min_confluence = 4 if with_trend else 5
 
         # Combined confluence from entry TF
-        total_confluence = signal_5m["confluence"]
+        total_confluence = signal_5m.get("confluence", 0)
 
-        # Boost from 15m alignment
-        if signal_15m["direction"] == direction:
+        # Boost from trend alignment
+        if with_trend:
             total_confluence += 1
 
-        # Need minimum 4 confluence points
-        if total_confluence < 4:
+        # Boost from 15m alignment
+        if signal_15m.get("direction") == direction:
+            total_confluence += 1
+
+        # Check minimum confluence
+        if total_confluence < min_confluence:
             return None
 
         entry_price = signal_5m.get("close", 0)
