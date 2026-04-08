@@ -4,267 +4,119 @@
     {
       "bot_name": "Bot-20x",
       "leverage": 20,
-      "allocation": 180.57833608158228,
+      "allocation": 200.0,
       "initial_allocation": 200.0,
-      "pnl_total": 4.133226569943302,
-      "pnl_pct": 2.066613284971651,
-      "total_trades": 25,
-      "wins": 13,
-      "losses": 12,
-      "win_rate": 52.0,
-      "open_positions": 1,
-      "daily_trades": 26,
-      "daily_pnl": 4.133226569943302,
+      "pnl_total": 0,
+      "pnl_pct": 0.0,
+      "total_trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": 0,
+      "open_positions": 0,
+      "daily_trades": 0,
+      "daily_pnl": 0.0,
       "paused": false,
-      "avg_win": 2.9905271719048447,
-      "avg_loss": -2.8953022220683065,
-      "profit_factor": 1.118963590353349,
-      "max_drawdown": 24.372182997615752,
-      "trades_by_symbol": {
-        "BTCUSDT": {
-          "total": 13,
-          "wins": 8,
-          "pnl": 26.559773511831235,
-          "win_rate": 61.53846153846154
-        },
-        "ETHUSDT": {
-          "total": 5,
-          "wins": 2,
-          "pnl": -12.027836784224025,
-          "win_rate": 40.0
-        },
-        "SOLUSDT": {
-          "total": 4,
-          "wins": 1,
-          "pnl": -11.453550230253253,
-          "win_rate": 25.0
-        },
-        "XRPUSDT": {
-          "total": 3,
-          "wins": 2,
-          "pnl": 1.054840072589343,
-          "win_rate": 66.66666666666666
-        }
-      },
-      "trades_by_reason": {
-        "trailing_stop": {
-          "total": 8,
-          "wins": 4
-        },
-        "stop_loss": {
-          "total": 8,
-          "wins": 0
-        },
-        "take_profit": {
-          "total": 9,
-          "wins": 9
-        }
-      }
+      "avg_win": 0,
+      "avg_loss": 0,
+      "profit_factor": 0,
+      "max_drawdown": 0,
+      "sharpe": 0,
+      "trades_by_symbol": {},
+      "trades_by_reason": {}
     },
     {
       "bot_name": "Bot-30x",
       "leverage": 30,
-      "allocation": 180.67997208437538,
+      "allocation": 200.0,
       "initial_allocation": 200.0,
-      "pnl_total": -4.262631824077028,
-      "pnl_pct": -2.131315912038514,
-      "total_trades": 24,
-      "wins": 12,
-      "losses": 12,
-      "win_rate": 50.0,
-      "open_positions": 1,
-      "daily_trades": 25,
-      "daily_pnl": -4.262631824077028,
+      "pnl_total": 0,
+      "pnl_pct": 0.0,
+      "total_trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": 0,
+      "open_positions": 0,
+      "daily_trades": 0,
+      "daily_pnl": 0.0,
       "paused": false,
-      "avg_win": 2.8823711599269317,
-      "avg_loss": -3.2375904786000174,
-      "profit_factor": 0.8902828134005732,
-      "max_drawdown": 28.206132242829227,
-      "trades_by_symbol": {
-        "BTCUSDT": {
-          "total": 12,
-          "wins": 8,
-          "pnl": 16.917148683485916,
-          "win_rate": 66.66666666666666
-        },
-        "ETHUSDT": {
-          "total": 5,
-          "wins": 1,
-          "pnl": -10.188248270285293,
-          "win_rate": 20.0
-        },
-        "SOLUSDT": {
-          "total": 4,
-          "wins": 1,
-          "pnl": -12.13234451632967,
-          "win_rate": 25.0
-        },
-        "XRPUSDT": {
-          "total": 3,
-          "wins": 2,
-          "pnl": 1.1408122790520236,
-          "win_rate": 66.66666666666666
-        }
-      },
-      "trades_by_reason": {
-        "trailing_stop": {
-          "total": 7,
-          "wins": 4
-        },
-        "stop_loss": {
-          "total": 9,
-          "wins": 0
-        },
-        "take_profit": {
-          "total": 8,
-          "wins": 8
-        }
-      }
+      "avg_win": 0,
+      "avg_loss": 0,
+      "profit_factor": 0,
+      "max_drawdown": 0,
+      "sharpe": 0,
+      "trades_by_symbol": {},
+      "trades_by_reason": {}
     },
     {
       "bot_name": "Bot-40x",
       "leverage": 40,
-      "allocation": 187.79763716013937,
+      "allocation": 200.0,
       "initial_allocation": 200.0,
-      "pnl_total": -0.7040009325868448,
-      "pnl_pct": -0.3520004662934224,
-      "total_trades": 25,
-      "wins": 12,
-      "losses": 13,
-      "win_rate": 48.0,
-      "open_positions": 1,
-      "daily_trades": 26,
-      "daily_pnl": -0.7040009325868448,
+      "pnl_total": 0,
+      "pnl_pct": 0.0,
+      "total_trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": 0,
+      "open_positions": 0,
+      "daily_trades": 0,
+      "daily_pnl": 0.0,
       "paused": false,
-      "avg_win": 2.9941249194884425,
-      "avg_loss": -2.817961535880628,
-      "profit_factor": 0.9807825915287475,
-      "max_drawdown": 25.454428698680957,
-      "trades_by_symbol": {
-        "BTCUSDT": {
-          "total": 12,
-          "wins": 7,
-          "pnl": 21.303048875974554,
-          "win_rate": 58.333333333333336
-        },
-        "ETHUSDT": {
-          "total": 5,
-          "wins": 1,
-          "pnl": -10.525758872258091,
-          "win_rate": 20.0
-        },
-        "SOLUSDT": {
-          "total": 5,
-          "wins": 2,
-          "pnl": -12.28866246308375,
-          "win_rate": 40.0
-        },
-        "XRPUSDT": {
-          "total": 3,
-          "wins": 2,
-          "pnl": 0.8073715267804387,
-          "win_rate": 66.66666666666666
-        }
-      },
-      "trades_by_reason": {
-        "trailing_stop": {
-          "total": 8,
-          "wins": 3
-        },
-        "stop_loss": {
-          "total": 8,
-          "wins": 0
-        },
-        "take_profit": {
-          "total": 9,
-          "wins": 9
-        }
-      }
+      "avg_win": 0,
+      "avg_loss": 0,
+      "profit_factor": 0,
+      "max_drawdown": 0,
+      "sharpe": 0,
+      "trades_by_symbol": {},
+      "trades_by_reason": {}
     },
     {
       "bot_name": "Bot-50x",
       "leverage": 50,
-      "allocation": 183.4376516294934,
+      "allocation": 200.0,
       "initial_allocation": 200.0,
-      "pnl_total": -7.685915512229727,
-      "pnl_pct": -3.8429577561148633,
-      "total_trades": 24,
-      "wins": 11,
-      "losses": 13,
-      "win_rate": 45.83333333333333,
-      "open_positions": 1,
-      "daily_trades": 25,
-      "daily_pnl": -7.685915512229727,
+      "pnl_total": 0,
+      "pnl_pct": 0.0,
+      "total_trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate": 0,
+      "open_positions": 0,
+      "daily_trades": 0,
+      "daily_pnl": 0.0,
       "paused": false,
-      "avg_win": 3.361087459047454,
-      "avg_loss": -3.4352213509039795,
-      "profit_factor": 0.8278933990626435,
-      "max_drawdown": 28.62756063748907,
-      "trades_by_symbol": {
-        "BTCUSDT": {
-          "total": 12,
-          "wins": 7,
-          "pnl": 12.913830874510971,
-          "win_rate": 58.333333333333336
-        },
-        "ETHUSDT": {
-          "total": 5,
-          "wins": 1,
-          "pnl": -10.409507338495667,
-          "win_rate": 20.0
-        },
-        "SOLUSDT": {
-          "total": 4,
-          "wins": 1,
-          "pnl": -11.956985274648478,
-          "win_rate": 25.0
-        },
-        "XRPUSDT": {
-          "total": 3,
-          "wins": 2,
-          "pnl": 1.7667462264034395,
-          "win_rate": 66.66666666666666
-        }
-      },
-      "trades_by_reason": {
-        "trailing_stop": {
-          "total": 5,
-          "wins": 2
-        },
-        "stop_loss": {
-          "total": 10,
-          "wins": 0
-        },
-        "take_profit": {
-          "total": 9,
-          "wins": 9
-        }
-      }
+      "avg_win": 0,
+      "avg_loss": 0,
+      "profit_factor": 0,
+      "max_drawdown": 0,
+      "sharpe": 0,
+      "trades_by_symbol": {},
+      "trades_by_reason": {}
     }
   ],
-  "total_cycles": 430,
-  "uptime_hours": 4.85701068951024,
+  "total_cycles": 22,
+  "uptime_hours": 0.21380833446979522,
   "auto_tuner": {
-    "level": 2,
-    "level_name": "Very Tight",
+    "level": 0,
+    "level_name": "Normal",
     "settings": {
-      "name": "Very Tight",
-      "min_confluence": 5,
+      "name": "Normal",
+      "min_confluence": 4,
       "rsi_long": [
-        30,
-        45
+        25,
+        50
       ],
       "rsi_short": [
-        55,
-        70
+        50,
+        75
       ],
-      "bb_long_threshold": 0.2,
-      "bb_short_threshold": 0.8,
-      "volume_mult": 1.4,
-      "stoch_oversold": 0.25,
-      "stoch_overbought": 0.75
+      "bb_long_threshold": 0.3,
+      "bb_short_threshold": 0.7,
+      "volume_mult": 1.2,
+      "stoch_oversold": 0.35,
+      "stoch_overbought": 0.65
     },
-    "adjustments": 2
+    "adjustments": 0
   },
-  "saved_at": 1775662239.446008
+  "saved_at": 1775663909.965633
 }

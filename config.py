@@ -14,8 +14,7 @@ MAKER_FEE = 0.0002              # 0.02%
 TAKER_FEE = 0.0005              # 0.05% (market orders)
 
 # === Trading Pairs ===
-# Removed ETH (20% WR) and SOL (25% WR) — only trade winners
-TRADING_PAIRS = ["BTCUSDT", "XRPUSDT"]
+TRADING_PAIRS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT"]
 
 # === Bot Configurations ===
 BOTS = [
