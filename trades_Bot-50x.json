@@ -5,7 +5,7 @@
   "stats": {
     "bot_name": "Bot-50x",
     "leverage": 50,
-    "allocation": 200.0,
+    "allocation": 2.145906460595114,
     "initial_allocation": 200.0,
     "pnl_total": 0,
     "pnl_pct": 0.0,
@@ -13,10 +13,10 @@
     "wins": 0,
     "losses": 0,
     "win_rate": 0,
-    "open_positions": 0,
-    "daily_trades": 0,
+    "open_positions": 33,
+    "daily_trades": 33,
     "daily_pnl": 0.0,
     "paused": false
   },
-  "saved_at": 1775641387.58404
+  "saved_at": 1775642200.578026
 }

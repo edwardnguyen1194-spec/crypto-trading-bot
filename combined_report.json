@@ -4,7 +4,7 @@
     {
       "bot_name": "Bot-20x",
       "leverage": 20,
-      "allocation": 200.0,
+      "allocation": 0.015067863858094995,
       "initial_allocation": 200.0,
       "pnl_total": 0,
       "pnl_pct": 0.0,
@@ -12,8 +12,8 @@
       "wins": 0,
       "losses": 0,
       "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
+      "open_positions": 33,
+      "daily_trades": 33,
       "daily_pnl": 0.0,
       "paused": false,
       "avg_win": 0,
@@ -27,7 +27,7 @@
     {
       "bot_name": "Bot-30x",
       "leverage": 30,
-      "allocation": 200.0,
+      "allocation": 0.09239597408567563,
       "initial_allocation": 200.0,
       "pnl_total": 0,
       "pnl_pct": 0.0,
@@ -35,8 +35,8 @@
       "wins": 0,
       "losses": 0,
       "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
+      "open_positions": 33,
+      "daily_trades": 33,
       "daily_pnl": 0.0,
       "paused": false,
       "avg_win": 0,
@@ -50,7 +50,7 @@
     {
       "bot_name": "Bot-40x",
       "leverage": 40,
-      "allocation": 200.0,
+      "allocation": 0.6192494111876051,
       "initial_allocation": 200.0,
       "pnl_total": 0,
       "pnl_pct": 0.0,
@@ -58,8 +58,8 @@
       "wins": 0,
       "losses": 0,
       "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
+      "open_positions": 33,
+      "daily_trades": 33,
       "daily_pnl": 0.0,
       "paused": false,
       "avg_win": 0,
@@ -73,7 +73,7 @@
     {
       "bot_name": "Bot-50x",
       "leverage": 50,
-      "allocation": 200.0,
+      "allocation": 2.145906460595114,
       "initial_allocation": 200.0,
       "pnl_total": 0,
       "pnl_pct": 0.0,
@@ -81,8 +81,8 @@
       "wins": 0,
       "losses": 0,
       "win_rate": 0,
-      "open_positions": 0,
-      "daily_trades": 0,
+      "open_positions": 33,
+      "daily_trades": 33,
       "daily_pnl": 0.0,
       "paused": false,
       "avg_win": 0,
@@ -94,8 +94,8 @@
       "trades_by_reason": {}
     }
   ],
-  "total_cycles": 22,
-  "uptime_hours": 0.2141047904888789,
+  "total_cycles": 10,
+  "uptime_hours": 0.10561496741241878,
   "auto_tuner": {
     "level": 0,
     "level_name": "Normal",
@@ -118,5 +118,5 @@
     },
     "adjustments": 0
   },
-  "saved_at": 1775641387.584167
+  "saved_at": 1775642200.5789921
 }

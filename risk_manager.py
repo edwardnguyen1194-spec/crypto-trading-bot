@@ -55,8 +55,8 @@ class RiskManager:
 
         # Check max concurrent positions for this symbol
         positions_for_symbol = sum(
-            1 for s, p in self.open_positions.items()
-            if s == symbol and p.get("status") == "open"
+            1 for pid, p in self.open_positions.items()
+            if p.get("symbol") == symbol and p.get("status") == "open"
         )
         if positions_for_symbol >= config.MAX_CONCURRENT_POSITIONS:
             return False, f"Max concurrent positions ({config.MAX_CONCURRENT_POSITIONS}) for {symbol}"

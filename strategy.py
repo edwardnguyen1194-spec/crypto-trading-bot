@@ -76,9 +76,9 @@ class MultiTFStrategy:
         self.client = client
         self._cache = {}  # symbol -> {tf -> (data, fetch_time)}
         self._cache_ttl = {
-            "5m": 60,     # refresh 5m data every minute
-            "15m": 120,   # refresh 15m data every 2 min
-            "1h": 300,    # refresh 1h data every 5 min
+            "5m": 25,     # refresh 5m data every 25 sec
+            "15m": 60,    # refresh 15m data every minute
+            "1h": 120,    # refresh 1h data every 2 min
         }
 
     def _get_data(self, symbol: str, timeframe: str) -> dict:
