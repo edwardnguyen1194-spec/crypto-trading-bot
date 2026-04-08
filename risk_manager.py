@@ -138,6 +138,8 @@ class RiskManager:
             "trailing_distance": signal.trailing_distance,
             "trailing_active": False,
             "trailing_stop": None,
+            "atr": signal.atr,
+            "exit_stage": "initial",
             "open_time": time.time(),
             "status": "open",
         }
@@ -206,10 +208,11 @@ class RiskManager:
 
     def check_exits(self, current_prices: dict) -> list:
         """
-        Check all open positions for exit conditions.
+        GOD MODE EXITS: Smart staged stop loss management.
         current_prices: {symbol: current_price}
         Returns list of (position_id, exit_reason) tuples.
         """
+        from god_mode_exits import calculate_smart_exit
         exits = []
         now = time.time()
 
@@ -221,6 +224,9 @@ class RiskManager:
             price = current_prices.get(symbol)
             if price is None:
                 continue
+
+            # === GOD MODE: Smart staged SL management ===
+            calculate_smart_exit(pos, price)
 
             # === Stop Loss ===
             if pos["direction"] == "LONG" and price <= pos["stop_loss"]:

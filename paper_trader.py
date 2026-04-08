@@ -10,7 +10,9 @@ import uuid
 import os
 from typing import Optional
 from bitunix_client import BitunixClient
-from strategy import MultiTFStrategy, Signal
+from god_mode_strategy import GodModeStrategy
+from god_mode_exits import calculate_smart_exit
+from strategy import Signal
 from risk_manager import RiskManager
 import config
 
@@ -22,7 +24,7 @@ class PaperTrader:
         self.bot_name = bot_config["name"]
         self.leverage = bot_config["leverage"]
         self.client = client
-        self.strategy = MultiTFStrategy(client)
+        self.strategy = GodModeStrategy(client)  # GOD MODE
         self.risk = RiskManager(
             bot_name=self.bot_name,
             leverage=self.leverage,
