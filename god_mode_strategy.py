@@ -50,7 +50,7 @@ class GodModeAnalyzer:
         plus_di = adx.adx_pos().iloc[-1]
         minus_di = adx.adx_neg().iloc[-1]
 
-        trending = adx_value > 20  # ADX > 20 = trending market
+        trending = adx_value > 15  # ADX > 15 = mild trend is enough
         if plus_di > minus_di:
             direction = "UP"
         elif minus_di > plus_di:
@@ -86,26 +86,28 @@ class GodModeAnalyzer:
         last_ema = ema20.iloc[-1]
 
         if trend_dir == "UP":
-            # Pullback in uptrend: price dipped toward/below EMA20, RSI was low and now recovering
-            near_ema = last_close <= last_ema * 1.005  # within 0.5% of EMA
-            rsi_recovering = last_rsi > prev_rsi and prev_rsi < prev2_rsi  # RSI bottomed and turning up
-            rsi_not_extreme = 30 < last_rsi < 55  # not overbought
+            # Pullback in uptrend: price near EMA OR RSI dipped and recovering
+            near_ema = last_close <= last_ema * 1.01  # within 1% of EMA
+            rsi_recovering = last_rsi > prev_rsi  # RSI turning up
+            rsi_dipped = last_rsi < 55  # RSI not overbought
+            # Need EITHER near EMA or RSI recovering (not both required)
+            pullback_detected = (near_ema and rsi_dipped) or (rsi_recovering and rsi_dipped and last_rsi < 45)
 
             return {
-                "pullback": near_ema and rsi_recovering and rsi_not_extreme,
+                "pullback": pullback_detected,
                 "near_ema": near_ema,
                 "rsi_recovering": rsi_recovering,
                 "rsi": last_rsi,
                 "ema_dist_pct": (last_close - last_ema) / last_ema * 100,
             }
         elif trend_dir == "DOWN":
-            # Pullback in downtrend: price rallied toward/above EMA20, RSI was high and now falling
-            near_ema = last_close >= last_ema * 0.995
-            rsi_falling = last_rsi < prev_rsi and prev_rsi > prev2_rsi  # RSI peaked and turning down
-            rsi_not_extreme = 45 < last_rsi < 70
+            near_ema = last_close >= last_ema * 0.99
+            rsi_falling = last_rsi < prev_rsi  # RSI turning down
+            rsi_rallied = last_rsi > 45
+            pullback_detected = (near_ema and rsi_rallied) or (rsi_falling and rsi_rallied and last_rsi > 55)
 
             return {
-                "pullback": near_ema and rsi_falling and rsi_not_extreme,
+                "pullback": pullback_detected,
                 "near_ema": near_ema,
                 "rsi_falling": rsi_falling,
                 "rsi": last_rsi,
@@ -140,8 +142,10 @@ class GodModeAnalyzer:
         if direction == "LONG":
             bullish = last["close"] > last["open"]  # green candle
             higher_low = last["low"] > prev["low"]  # making higher lows
+            # Need bullish candle + at least ONE of: body ratio, volume spike, higher low
+            confirmations = sum([body_ratio > 0.4, vol_spike, higher_low])
             return {
-                "momentum": bullish and body_ratio > 0.5 and vol_spike and higher_low,
+                "momentum": bullish and confirmations >= 1,
                 "body_ratio": body_ratio,
                 "vol_spike": vol_spike,
                 "bullish": bullish,
@@ -150,8 +154,9 @@ class GodModeAnalyzer:
         elif direction == "SHORT":
             bearish = last["close"] < last["open"]  # red candle
             lower_high = last["high"] < prev["high"]  # making lower highs
+            confirmations = sum([body_ratio > 0.4, vol_spike, lower_high])
             return {
-                "momentum": bearish and body_ratio > 0.5 and vol_spike and lower_high,
+                "momentum": bearish and confirmations >= 1,
                 "body_ratio": body_ratio,
                 "vol_spike": vol_spike,
                 "bearish": bearish,

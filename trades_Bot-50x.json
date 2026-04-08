@@ -1,22 +1,36 @@
 {
   "bot_name": "Bot-50x",
   "leverage": 50,
-  "trades": [],
+  "trades": [
+    {
+      "position_id": "Bot-50x_SOLUSDT_258e37dd",
+      "symbol": "SOLUSDT",
+      "direction": "LONG",
+      "entry_price": 83.27,
+      "exit_price": 83.7,
+      "qty": 5.829814605351074,
+      "pnl": 2.020118207973267,
+      "pnl_pct": 20.806713101957897,
+      "reason": "take_profit",
+      "duration": 1701.6985290050507,
+      "win": "True"
+    }
+  ],
   "stats": {
     "bot_name": "Bot-50x",
     "leverage": 50,
-    "allocation": 200.0,
+    "allocation": 202.02011820797327,
     "initial_allocation": 200.0,
-    "pnl_total": 0,
-    "pnl_pct": 0.0,
-    "total_trades": 0,
-    "wins": 0,
+    "pnl_total": 2.020118207973267,
+    "pnl_pct": 1.0100591039866336,
+    "total_trades": 1,
+    "wins": 1,
     "losses": 0,
-    "win_rate": 0,
+    "win_rate": 100.0,
     "open_positions": 0,
-    "daily_trades": 0,
-    "daily_pnl": 0.0,
+    "daily_trades": 1,
+    "daily_pnl": 2.020118207973267,
     "paused": false
   },
-  "saved_at": 1775663909.965421
+  "saved_at": 1775686578.541945
 }

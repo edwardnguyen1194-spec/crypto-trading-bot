@@ -4,98 +4,158 @@
     {
       "bot_name": "Bot-20x",
       "leverage": 20,
-      "allocation": 200.0,
+      "allocation": 203.98853269015487,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
-      "wins": 0,
+      "pnl_total": 3.988532690154867,
+      "pnl_pct": 1.9942663450774338,
+      "total_trades": 2,
+      "wins": 2,
       "losses": 0,
-      "win_rate": 0,
+      "win_rate": 100.0,
       "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "daily_trades": 2,
+      "daily_pnl": 3.988532690154867,
       "paused": false,
-      "avg_win": 0,
+      "avg_win": 1.9942663450774336,
       "avg_loss": 0,
-      "profit_factor": 0,
+      "profit_factor": Infinity,
       "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "trades_by_symbol": {
+        "SOLUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 1.9618492109927534,
+          "win_rate": 100.0
+        },
+        "ETHUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 2.0266834791621138,
+          "win_rate": 100.0
+        }
+      },
+      "trades_by_reason": {
+        "take_profit": {
+          "total": 2,
+          "wins": 2
+        }
+      }
     },
     {
       "bot_name": "Bot-30x",
       "leverage": 30,
-      "allocation": 200.0,
+      "allocation": 202.27022416149669,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
-      "wins": 0,
+      "pnl_total": 2.2702241614966647,
+      "pnl_pct": 1.1351120807483324,
+      "total_trades": 2,
+      "wins": 2,
       "losses": 0,
-      "win_rate": 0,
+      "win_rate": 100.0,
       "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "daily_trades": 2,
+      "daily_pnl": 2.2702241614966647,
       "paused": false,
-      "avg_win": 0,
+      "avg_win": 1.1351120807483324,
       "avg_loss": 0,
-      "profit_factor": 0,
+      "profit_factor": Infinity,
       "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "trades_by_symbol": {
+        "SOLUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 1.9618492109927534,
+          "win_rate": 100.0
+        },
+        "ETHUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 0.3083749505039113,
+          "win_rate": 100.0
+        }
+      },
+      "trades_by_reason": {
+        "take_profit": {
+          "total": 1,
+          "wins": 1
+        },
+        "stop_loss": {
+          "total": 1,
+          "wins": 1
+        }
+      }
     },
     {
       "bot_name": "Bot-40x",
       "leverage": 40,
-      "allocation": 200.0,
+      "allocation": 202.07838720495369,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
-      "wins": 0,
+      "pnl_total": 2.078387204953698,
+      "pnl_pct": 1.039193602476849,
+      "total_trades": 1,
+      "wins": 1,
       "losses": 0,
-      "win_rate": 0,
+      "win_rate": 100.0,
       "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "daily_trades": 1,
+      "daily_pnl": 2.078387204953698,
       "paused": false,
-      "avg_win": 0,
+      "avg_win": 2.078387204953698,
       "avg_loss": 0,
-      "profit_factor": 0,
+      "profit_factor": Infinity,
       "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "trades_by_symbol": {
+        "SOLUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 2.078387204953698,
+          "win_rate": 100.0
+        }
+      },
+      "trades_by_reason": {
+        "take_profit": {
+          "total": 1,
+          "wins": 1
+        }
+      }
     },
     {
       "bot_name": "Bot-50x",
       "leverage": 50,
-      "allocation": 200.0,
+      "allocation": 202.02011820797327,
       "initial_allocation": 200.0,
-      "pnl_total": 0,
-      "pnl_pct": 0.0,
-      "total_trades": 0,
-      "wins": 0,
+      "pnl_total": 2.020118207973267,
+      "pnl_pct": 1.0100591039866336,
+      "total_trades": 1,
+      "wins": 1,
       "losses": 0,
-      "win_rate": 0,
+      "win_rate": 100.0,
       "open_positions": 0,
-      "daily_trades": 0,
-      "daily_pnl": 0.0,
+      "daily_trades": 1,
+      "daily_pnl": 2.020118207973267,
       "paused": false,
-      "avg_win": 0,
+      "avg_win": 2.020118207973267,
       "avg_loss": 0,
-      "profit_factor": 0,
+      "profit_factor": Infinity,
       "max_drawdown": 0,
-      "sharpe": 0,
-      "trades_by_symbol": {},
-      "trades_by_reason": {}
+      "trades_by_symbol": {
+        "SOLUSDT": {
+          "total": 1,
+          "wins": 1,
+          "pnl": 2.020118207973267,
+          "win_rate": 100.0
+        }
+      },
+      "trades_by_reason": {
+        "take_profit": {
+          "total": 1,
+          "wins": 1
+        }
+      }
     }
   ],
-  "total_cycles": 22,
-  "uptime_hours": 0.21380833446979522,
+  "total_cycles": 520,
+  "uptime_hours": 6.028216544787089,
   "auto_tuner": {
     "level": 0,
     "level_name": "Normal",
@@ -118,5 +178,5 @@
     },
     "adjustments": 0
   },
-  "saved_at": 1775663909.965633
+  "saved_at": 1775686578.542488
 }

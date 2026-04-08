@@ -1,22 +1,49 @@
 {
   "bot_name": "Bot-20x",
   "leverage": 20,
-  "trades": [],
+  "trades": [
+    {
+      "position_id": "Bot-20x_SOLUSDT_0a3b614e",
+      "symbol": "SOLUSDT",
+      "direction": "LONG",
+      "entry_price": 83.27,
+      "exit_price": 83.69,
+      "qty": 5.829814605351074,
+      "pnl": 1.9618492109927534,
+      "pnl_pct": 8.082622793322965,
+      "reason": "take_profit",
+      "duration": 1742.47807431221,
+      "win": "True"
+    },
+    {
+      "position_id": "Bot-20x_ETHUSDT_69eef1e2",
+      "symbol": "ETHUSDT",
+      "direction": "LONG",
+      "entry_price": 2224.45,
+      "exit_price": 2235.84,
+      "qty": 0.22125715736352175,
+      "pnl": 2.0266834791621138,
+      "pnl_pct": 8.235613297669381,
+      "reason": "take_profit",
+      "duration": 1307.9777019023895,
+      "win": "True"
+    }
+  ],
   "stats": {
     "bot_name": "Bot-20x",
     "leverage": 20,
-    "allocation": 200.0,
+    "allocation": 203.98853269015487,
     "initial_allocation": 200.0,
-    "pnl_total": 0,
-    "pnl_pct": 0.0,
-    "total_trades": 0,
-    "wins": 0,
+    "pnl_total": 3.988532690154867,
+    "pnl_pct": 1.9942663450774338,
+    "total_trades": 2,
+    "wins": 2,
     "losses": 0,
-    "win_rate": 0,
+    "win_rate": 100.0,
     "open_positions": 0,
-    "daily_trades": 0,
-    "daily_pnl": 0.0,
+    "daily_trades": 2,
+    "daily_pnl": 3.988532690154867,
     "paused": false
   },
-  "saved_at": 1775663909.964503
+  "saved_at": 1775686578.539776
 }
