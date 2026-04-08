@@ -17,9 +17,20 @@ if [ ! -f "$PYTHON" ]; then
 fi
 
 case "${1:-paper}" in
-    paper)  "$PYTHON" "$DIR/main.py" --mode paper ;;
-    live)   "$PYTHON" "$DIR/main.py" --mode live ${2:+--leverage $2} ;;
+    paper)
+        "$PYTHON" "$DIR/web_dashboard.py" &
+        DASH_PID=$!
+        trap "kill $DASH_PID 2>/dev/null" EXIT
+        "$PYTHON" "$DIR/main.py" --mode paper
+        ;;
+    live)
+        "$PYTHON" "$DIR/web_dashboard.py" &
+        DASH_PID=$!
+        trap "kill $DASH_PID 2>/dev/null" EXIT
+        "$PYTHON" "$DIR/main.py" --mode live ${2:+--leverage $2}
+        ;;
     report) "$PYTHON" "$DIR/main.py" --report ;;
     test)   "$PYTHON" "$DIR/main.py" --test ;;
+    web)    "$PYTHON" "$DIR/web_dashboard.py" ;;
     *)      "$PYTHON" "$DIR/main.py" "$@" ;;
 esac
