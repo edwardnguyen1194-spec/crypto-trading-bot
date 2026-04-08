@@ -33,18 +33,13 @@ def calculate_smart_exit(pos: dict, current_price: float) -> dict:
     if direction == "LONG":
         profit_atr = (current_price - entry) / atr  # how many ATRs in profit
 
-        if profit_atr >= 1.5:
-            # Stage 4: Trail at 1x ATR
-            new_sl = current_price - (atr * 1.0)
-            min_sl = entry + (atr * 0.5)  # never below locked profit
+        if profit_atr >= 0.5:
+            # Stage 3: Trail tightly once at 0.5 ATR profit
+            new_sl = current_price - (atr * 0.3)
+            min_sl = entry + (atr * 0.1)  # always above breakeven
             pos["stop_loss"] = max(new_sl, min_sl, pos.get("stop_loss", 0))
             pos["exit_stage"] = "trailing"
-        elif profit_atr >= 1.0:
-            # Stage 3: Lock profit at entry + 0.5 ATR
-            locked = entry + (atr * 0.5)
-            pos["stop_loss"] = max(locked, pos.get("stop_loss", 0))
-            pos["exit_stage"] = "locked_profit"
-        elif profit_atr >= 0.5:
+        elif profit_atr >= 0.25:
             # Stage 2: Move to breakeven
             pos["stop_loss"] = max(entry, pos.get("stop_loss", 0))
             pos["exit_stage"] = "breakeven"
@@ -54,16 +49,12 @@ def calculate_smart_exit(pos: dict, current_price: float) -> dict:
     elif direction == "SHORT":
         profit_atr = (entry - current_price) / atr
 
-        if profit_atr >= 1.5:
-            new_sl = current_price + (atr * 1.0)
-            max_sl = entry - (atr * 0.5)
+        if profit_atr >= 0.5:
+            new_sl = current_price + (atr * 0.3)
+            max_sl = entry - (atr * 0.1)
             pos["stop_loss"] = min(new_sl, max_sl, pos.get("stop_loss", float('inf')))
             pos["exit_stage"] = "trailing"
-        elif profit_atr >= 1.0:
-            locked = entry - (atr * 0.5)
-            pos["stop_loss"] = min(locked, pos.get("stop_loss", float('inf')))
-            pos["exit_stage"] = "locked_profit"
-        elif profit_atr >= 0.5:
+        elif profit_atr >= 0.25:
             pos["stop_loss"] = min(entry, pos.get("stop_loss", float('inf')))
             pos["exit_stage"] = "breakeven"
         else:

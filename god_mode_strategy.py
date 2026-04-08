@@ -119,48 +119,86 @@ class GodModeAnalyzer:
     @staticmethod
     def detect_momentum_candle(df: pd.DataFrame, direction: str) -> dict:
         """
-        Check if the last candle is a momentum candle confirming direction.
-        Momentum candle = large body relative to wick, closing in direction.
+        Check for momentum using TA-Lib candlestick patterns + basic candle analysis.
+        Uses professional pattern recognition for better entry timing.
         """
-        if len(df) < 3:
+        if len(df) < 5:
             return {"momentum": False}
+
+        try:
+            import talib
+            o = df["open"].values.astype(np.float64)
+            h = df["high"].values.astype(np.float64)
+            l = df["low"].values.astype(np.float64)
+            c = df["close"].values.astype(np.float64)
+
+            # Bullish reversal patterns (for LONG entries after pullback)
+            bullish_patterns = {
+                "hammer": talib.CDLHAMMER(o, h, l, c)[-1],
+                "engulfing": talib.CDLENGULFING(o, h, l, c)[-1],
+                "morning_star": talib.CDLMORNINGSTAR(o, h, l, c)[-1],
+                "dragonfly_doji": talib.CDLDRAGONFLYDOJI(o, h, l, c)[-1],
+                "piercing": talib.CDLPIERCING(o, h, l, c)[-1],
+                "three_white": talib.CDL3WHITESOLDIERS(o, h, l, c)[-1],
+                "harami": talib.CDLHARAMI(o, h, l, c)[-1],
+            }
+
+            # Bearish reversal patterns (for SHORT entries after rally)
+            bearish_patterns = {
+                "hanging_man": talib.CDLHANGINGMAN(o, h, l, c)[-1],
+                "engulfing": talib.CDLENGULFING(o, h, l, c)[-1],
+                "evening_star": talib.CDLEVENINGSTAR(o, h, l, c)[-1],
+                "shooting_star": talib.CDLSHOOTINGSTAR(o, h, l, c)[-1],
+                "dark_cloud": talib.CDLDARKCLOUDCOVER(o, h, l, c)[-1],
+                "three_black": talib.CDL3BLACKCROWS(o, h, l, c)[-1],
+                "harami": talib.CDLHARAMI(o, h, l, c)[-1],
+            }
+
+            has_talib = True
+        except ImportError:
+            has_talib = False
+            bullish_patterns = {}
+            bearish_patterns = {}
 
         last = df.iloc[-1]
         prev = df.iloc[-2]
-
         body = abs(last["close"] - last["open"])
         total_range = last["high"] - last["low"]
-        if total_range == 0:
-            return {"momentum": False}
-
-        body_ratio = body / total_range  # how much of the candle is body vs wicks
-
-        # Volume must be above average
+        body_ratio = body / total_range if total_range > 0 else 0
         vol_ma = df["volume"].rolling(20).mean().iloc[-1]
         vol_spike = last["volume"] > vol_ma * 1.1
 
         if direction == "LONG":
-            bullish = last["close"] > last["open"]  # green candle
-            higher_low = last["low"] > prev["low"]  # making higher lows
-            # Need bullish candle + at least ONE of: body ratio, volume spike, higher low
-            confirmations = sum([body_ratio > 0.4, vol_spike, higher_low])
+            bullish = last["close"] > last["open"]
+            higher_low = last["low"] > prev["low"]
+            # TA-Lib bullish pattern detected?
+            pattern_signal = any(v > 0 for v in bullish_patterns.values()) if has_talib else False
+            detected = [k for k, v in bullish_patterns.items() if v > 0]
+
+            # Need: bullish candle OR bullish pattern
+            confirmations = sum([bullish, body_ratio > 0.35, vol_spike, higher_low, pattern_signal])
             return {
-                "momentum": bullish and confirmations >= 1,
+                "momentum": confirmations >= 2,
                 "body_ratio": body_ratio,
                 "vol_spike": vol_spike,
                 "bullish": bullish,
-                "higher_low": higher_low,
+                "pattern": detected if detected else None,
+                "confirmations": confirmations,
             }
         elif direction == "SHORT":
-            bearish = last["close"] < last["open"]  # red candle
-            lower_high = last["high"] < prev["high"]  # making lower highs
-            confirmations = sum([body_ratio > 0.4, vol_spike, lower_high])
+            bearish = last["close"] < last["open"]
+            lower_high = last["high"] < prev["high"]
+            pattern_signal = any(v < 0 for v in bearish_patterns.values()) if has_talib else False
+            detected = [k for k, v in bearish_patterns.items() if v < 0]
+
+            confirmations = sum([bearish, body_ratio > 0.35, vol_spike, lower_high, pattern_signal])
             return {
-                "momentum": bearish and confirmations >= 1,
+                "momentum": confirmations >= 2,
                 "body_ratio": body_ratio,
                 "vol_spike": vol_spike,
                 "bearish": bearish,
-                "lower_high": lower_high,
+                "pattern": detected if detected else None,
+                "confirmations": confirmations,
             }
 
         return {"momentum": False}

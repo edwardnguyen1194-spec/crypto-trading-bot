@@ -57,12 +57,15 @@ VOLUME_SPIKE_MULT = 1.2          # volume must be 1.2x average
 STOCH_RSI_PERIOD = 14
 
 # === Trade Management ===
-TP_ATR_MULT = 2.0               # take profit at 2x ATR (closer = more wins)
-SL_ATR_MULT = 2.5               # stop loss at 2.5x ATR (very wide, survive big wicks)
-TRAILING_ACTIVATE_ATR = 1.5     # activate trailing at 1.5x ATR (don't trail too early)
-TRAILING_DISTANCE_ATR = 1.0     # trail at 1x ATR (wider trail = don't get shaken out)
-REWARD_RISK_RATIO = 0.8         # minimum R:R (lower to allow more trades)
-TIME_STOP_HOURS = 8             # close if no TP hit in 8 hours
+# === HIGH WIN RATE EXIT SYSTEM ===
+# Key insight: tight TP + wide SL = high WR
+# Small quick wins that hit often, SL rarely reached
+TP_ATR_MULT = 0.8               # take profit at 0.8x ATR (TIGHT - grabs quick profit)
+SL_ATR_MULT = 3.0               # stop loss at 3x ATR (VERY WIDE - almost never hits)
+TRAILING_ACTIVATE_ATR = 0.5     # activate trail at 0.5x ATR (lock breakeven fast)
+TRAILING_DISTANCE_ATR = 0.4     # trail at 0.4x ATR
+REWARD_RISK_RATIO = 0.2         # R:R is low but WR compensates
+TIME_STOP_HOURS = 2             # shorter time stop - if no move in 2h, exit
 
 # === Paper Trading ===
 PAPER_TRADE_LOG = "paper_trades.json"
