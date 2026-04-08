@@ -1,0 +1,115 @@
+name: Crypto Trading Bot
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore trade state
+        continue-on-error: true
+        run: |
+          # Download previous state from artifacts if exists
+          echo "Checking for previous state..."
+
+      - name: Download previous state
+        uses: actions/download-artifact@v4
+        with:
+          name: bot-state
+          path: .
+        continue-on-error: true
+
+      - name: Run trading bot (single cycle)
+        run: |
+          python3 -c "
+          import json, time, os
+          from bitunix_client import BitunixClient
+          from bot_manager import BotManager
+
+          # Load previous state if exists
+          manager = BotManager(mode='paper')
+
+          # Load previous trade history
+          for bot in manager.bots:
+              state_file = f'state_{bot.bot_name}.json'
+              if os.path.exists(state_file):
+                  with open(state_file) as f:
+                      state = json.load(f)
+                  bot.risk.allocation = state.get('allocation', bot.risk.allocation)
+                  bot.risk.daily_trades = state.get('daily_trades', 0)
+                  bot.risk.daily_pnl = state.get('daily_pnl', 0)
+                  bot.risk.open_positions = state.get('open_positions', {})
+                  bot.trade_history = state.get('trade_history', [])
+                  print(f'Restored {bot.bot_name}: \${bot.risk.allocation:.2f}, {len(bot.trade_history)} trades')
+
+          # Run 3 cycles (covers ~90 seconds of scanning)
+          for i in range(3):
+              results = manager.tick_all()
+              time.sleep(5)
+
+          # Save state
+          for bot in manager.bots:
+              stats = bot.risk.get_stats()
+              state = {
+                  'allocation': bot.risk.allocation,
+                  'initial_allocation': bot.risk.initial_allocation,
+                  'daily_trades': bot.risk.daily_trades,
+                  'daily_pnl': bot.risk.daily_pnl,
+                  'open_positions': {k: v for k, v in bot.risk.open_positions.items()},
+                  'trade_history': bot.trade_history,
+                  'stats': stats,
+              }
+              with open(f'state_{bot.bot_name}.json', 'w') as f:
+                  json.dump(state, f, indent=2, default=str)
+
+          manager.save_all()
+
+          # Print summary
+          total_trades = sum(s.get('total_trades', 0) for s in [r.get('stats', r) for r in results])
+          total_wins = sum(s.get('wins', 0) for s in [r.get('stats', r) for r in results])
+          wr = (total_wins/total_trades*100) if total_trades > 0 else 0
+          total_pnl = sum(s.get('pnl_total', 0) for s in [r.get('stats', r) for r in results])
+          print(f'Trades: {total_trades} | WR: {wr:.1f}% | P&L: \${total_pnl:.2f}')
+          "
+
+      - name: Save bot state
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-state
+          path: |
+            state_*.json
+            combined_report.json
+            trades_*.json
+          retention-days: 30
+          overwrite: true
+
+      - name: Check win rate alert
+        run: |
+          python3 -c "
+          import json
+          with open('combined_report.json') as f:
+              r = json.load(f)
+          total = sum(b.get('total_trades',0) for b in r['bots'])
+          wins = sum(b.get('wins',0) for b in r['bots'])
+          wr = (wins/total*100) if total > 0 else 100
+          if total >= 10 and wr < 88:
+              print(f'::warning::Win rate dropped to {wr:.1f}% — below 88% target!')
+          else:
+              print(f'WR: {wr:.1f}% | Target: 88% | Status: OK')
+          "
