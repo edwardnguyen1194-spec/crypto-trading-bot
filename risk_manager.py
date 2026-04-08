@@ -239,11 +239,16 @@ class RiskManager:
                 continue
 
             # === Trailing Stop ===
+            # Only trails when solidly in profit, and NEVER trails below breakeven
+            entry = pos["entry_price"]
             if pos["direction"] == "LONG":
                 if price >= pos["trailing_activate"]:
                     pos["trailing_active"] = True
                 if pos["trailing_active"]:
                     new_trail = price - pos["trailing_distance"]
+                    # Never set trailing stop below breakeven + small buffer
+                    min_trail = entry + (pos["trailing_distance"] * 0.1)
+                    new_trail = max(new_trail, min_trail)
                     if pos["trailing_stop"] is None or new_trail > pos["trailing_stop"]:
                         pos["trailing_stop"] = new_trail
                     if price <= pos["trailing_stop"]:
@@ -254,6 +259,9 @@ class RiskManager:
                     pos["trailing_active"] = True
                 if pos["trailing_active"]:
                     new_trail = price + pos["trailing_distance"]
+                    # Never set trailing stop above breakeven - small buffer
+                    max_trail = entry - (pos["trailing_distance"] * 0.1)
+                    new_trail = min(new_trail, max_trail)
                     if pos["trailing_stop"] is None or new_trail < pos["trailing_stop"]:
                         pos["trailing_stop"] = new_trail
                     if price >= pos["trailing_stop"]:

@@ -14,7 +14,8 @@ MAKER_FEE = 0.0002              # 0.02%
 TAKER_FEE = 0.0005              # 0.05% (market orders)
 
 # === Trading Pairs ===
-TRADING_PAIRS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT"]
+# Removed ETH (20% WR) and SOL (25% WR) — only trade winners
+TRADING_PAIRS = ["BTCUSDT", "XRPUSDT"]
 
 # === Bot Configurations ===
 BOTS = [
@@ -57,12 +58,12 @@ VOLUME_SPIKE_MULT = 1.2          # volume must be 1.2x average
 STOCH_RSI_PERIOD = 14
 
 # === Trade Management ===
-TP_ATR_MULT = 2.5               # take profit at 2.5x ATR (closer, more wins)
-SL_ATR_MULT = 2.0               # stop loss at 2x ATR (wider to survive wicks)
-TRAILING_ACTIVATE_ATR = 1.0     # activate trailing stop at 1x ATR profit (lock gains early)
-TRAILING_DISTANCE_ATR = 0.5     # trail at 0.5x ATR (tight trail once activated)
-REWARD_RISK_RATIO = 1.2         # minimum R:R
-TIME_STOP_HOURS = 6             # close if no TP hit in 6 hours
+TP_ATR_MULT = 2.0               # take profit at 2x ATR (closer = more wins)
+SL_ATR_MULT = 2.5               # stop loss at 2.5x ATR (very wide, survive big wicks)
+TRAILING_ACTIVATE_ATR = 1.5     # activate trailing at 1.5x ATR (don't trail too early)
+TRAILING_DISTANCE_ATR = 1.0     # trail at 1x ATR (wider trail = don't get shaken out)
+REWARD_RISK_RATIO = 0.8         # minimum R:R (lower to allow more trades)
+TIME_STOP_HOURS = 8             # close if no TP hit in 8 hours
 
 # === Paper Trading ===
 PAPER_TRADE_LOG = "paper_trades.json"
