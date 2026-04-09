@@ -29,6 +29,12 @@ case "${1:-paper}" in
         trap "kill $DASH_PID 2>/dev/null" EXIT
         "$PYTHON" "$DIR/main.py" --mode live ${2:+--leverage $2}
         ;;
+    grid)
+        "$PYTHON" "$DIR/web_dashboard.py" &
+        DASH_PID=$!
+        trap "kill $DASH_PID 2>/dev/null" EXIT
+        "$PYTHON" "$DIR/grid_main.py"
+        ;;
     report) "$PYTHON" "$DIR/main.py" --report ;;
     test)   "$PYTHON" "$DIR/main.py" --test ;;
     web)    "$PYTHON" "$DIR/web_dashboard.py" ;;
