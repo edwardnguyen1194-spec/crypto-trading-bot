@@ -29,16 +29,47 @@ jobs:
       - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Verify Fly auth
+      - name: Diagnose environment
+        shell: bash
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
-          echo "=== flyctl version ==="
-          fly version
-          echo "=== whoami ==="
-          fly auth whoami || { echo "ERROR: FLY_API_TOKEN invalid or expired"; exit 1; }
-          echo "=== orgs ==="
-          fly orgs list || true
+          set +e
+          echo "=== which fly ==="
+          which fly || echo "fly not in PATH"
+          echo "=== fly version ==="
+          fly version || echo "fly version failed rc=$?"
+          echo "=== FLY_API_TOKEN check (no value printed) ==="
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "FLY_API_TOKEN is EMPTY — secret is missing or not named FLY_API_TOKEN"
+          else
+            TOK_LEN=${#FLY_API_TOKEN}
+            TOK_PREFIX="${FLY_API_TOKEN:0:5}"
+            echo "FLY_API_TOKEN is set, length=$TOK_LEN, starts_with='$TOK_PREFIX'"
+            if [[ "$TOK_PREFIX" != "FlyV1" ]]; then
+              echo "WARNING: token doesn't start with 'FlyV1' — probably wrong format"
+            fi
+          fi
+          echo "=== fly auth whoami ==="
+          fly auth whoami
+          WHOAMI_RC=$?
+          echo "whoami rc=$WHOAMI_RC"
+          echo "=== done ==="
+          exit 0
+
+      - name: Fail if auth is broken
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::error::FLY_API_TOKEN secret is missing. Add it in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          if ! fly auth whoami >/dev/null 2>&1; then
+            echo "::error::FLY_API_TOKEN is set but Fly rejects it. Token is likely revoked or invalid. Generate a new one at fly.io/user/personal_access_tokens and update the GitHub secret."
+            exit 1
+          fi
+          echo "Fly auth OK as: $(fly auth whoami)"
 
       - name: Ensure Fly app exists
         env:
