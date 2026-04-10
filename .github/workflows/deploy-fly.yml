@@ -26,8 +26,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install flyctl
+        shell: bash
+        working-directory: /tmp
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          echo "$HOME/.fly/bin" >> "$GITHUB_PATH"
+          "$HOME/.fly/bin/fly" version
 
       - name: Diagnose environment
         shell: bash
