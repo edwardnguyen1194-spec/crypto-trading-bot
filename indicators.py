@@ -1,6 +1,7 @@
 """
 Technical Indicators Module
-Uses the 'ta' library for reliable indicator calculations
+Uses the 'ta' library for reliable indicator calculations.
+Includes SuperTrend, Ichimoku Cloud, ADX, OBV, and full analysis dict.
 """
 
 import pandas as pd
@@ -52,6 +53,134 @@ def build_dataframe(klines: list) -> pd.DataFrame:
     return df
 
 
+def calculate_supertrend(df: pd.DataFrame, period: int = None, multiplier: float = None) -> pd.DataFrame:
+    """
+    Calculate SuperTrend indicator.
+    SuperTrend = ATR-based trend-following indicator.
+    Returns df with 'supertrend', 'supertrend_direction' columns.
+    """
+    period = period or config.SUPERTREND_PERIOD
+    multiplier = multiplier or config.SUPERTREND_MULTIPLIER
+
+    if len(df) < period + 1:
+        df["supertrend"] = np.nan
+        df["supertrend_direction"] = 0
+        return df
+
+    atr = ta.volatility.average_true_range(df["high"], df["low"], df["close"], window=period)
+
+    hl2 = (df["high"] + df["low"]) / 2
+    upper_band = hl2 + (multiplier * atr)
+    lower_band = hl2 - (multiplier * atr)
+
+    supertrend = pd.Series(np.nan, index=df.index)
+    direction = pd.Series(1, index=df.index)  # 1 = bullish, -1 = bearish
+
+    for i in range(period, len(df)):
+        if i == period:
+            supertrend.iloc[i] = lower_band.iloc[i]
+            direction.iloc[i] = 1
+            continue
+
+        # Adjust bands based on previous values
+        if lower_band.iloc[i] > lower_band.iloc[i - 1] or df["close"].iloc[i - 1] < lower_band.iloc[i - 1]:
+            pass  # keep current lower_band
+        else:
+            lower_band.iloc[i] = lower_band.iloc[i - 1]
+
+        if upper_band.iloc[i] < upper_band.iloc[i - 1] or df["close"].iloc[i - 1] > upper_band.iloc[i - 1]:
+            pass  # keep current upper_band
+        else:
+            upper_band.iloc[i] = upper_band.iloc[i - 1]
+
+        # Determine direction
+        if supertrend.iloc[i - 1] == upper_band.iloc[i - 1]:
+            if df["close"].iloc[i] > upper_band.iloc[i]:
+                supertrend.iloc[i] = lower_band.iloc[i]
+                direction.iloc[i] = 1
+            else:
+                supertrend.iloc[i] = upper_band.iloc[i]
+                direction.iloc[i] = -1
+        else:
+            if df["close"].iloc[i] < lower_band.iloc[i]:
+                supertrend.iloc[i] = upper_band.iloc[i]
+                direction.iloc[i] = -1
+            else:
+                supertrend.iloc[i] = lower_band.iloc[i]
+                direction.iloc[i] = 1
+
+    df["supertrend"] = supertrend
+    df["supertrend_direction"] = direction
+    return df
+
+
+def calculate_ichimoku(df: pd.DataFrame, conv_period: int = None,
+                       base_period: int = None, span_b_period: int = None) -> pd.DataFrame:
+    """
+    Calculate Ichimoku Cloud components.
+    Returns df with tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b columns.
+    """
+    conv_period = conv_period or config.ICHIMOKU_CONV
+    base_period = base_period or config.ICHIMOKU_BASE
+    span_b_period = span_b_period or config.ICHIMOKU_SPAN_B
+
+    if len(df) < span_b_period:
+        df["tenkan_sen"] = np.nan
+        df["kijun_sen"] = np.nan
+        df["senkou_span_a"] = np.nan
+        df["senkou_span_b"] = np.nan
+        return df
+
+    # Tenkan-sen (Conversion Line) = (highest high + lowest low) / 2 over conv_period
+    high_conv = df["high"].rolling(window=conv_period).max()
+    low_conv = df["low"].rolling(window=conv_period).min()
+    df["tenkan_sen"] = (high_conv + low_conv) / 2
+
+    # Kijun-sen (Base Line) = (highest high + lowest low) / 2 over base_period
+    high_base = df["high"].rolling(window=base_period).max()
+    low_base = df["low"].rolling(window=base_period).min()
+    df["kijun_sen"] = (high_base + low_base) / 2
+
+    # Senkou Span A = (Tenkan + Kijun) / 2, shifted forward base_period
+    df["senkou_span_a"] = ((df["tenkan_sen"] + df["kijun_sen"]) / 2).shift(base_period)
+
+    # Senkou Span B = (highest high + lowest low) / 2 over span_b_period, shifted forward base_period
+    high_span_b = df["high"].rolling(window=span_b_period).max()
+    low_span_b = df["low"].rolling(window=span_b_period).min()
+    df["senkou_span_b"] = ((high_span_b + low_span_b) / 2).shift(base_period)
+
+    return df
+
+
+def calculate_adx(df: pd.DataFrame, window: int = 14) -> pd.DataFrame:
+    """
+    Calculate ADX, +DI, -DI using ta library (NOT talib).
+    """
+    if len(df) < window + 1:
+        df["adx"] = np.nan
+        df["plus_di"] = np.nan
+        df["minus_di"] = np.nan
+        return df
+
+    adx_indicator = ta.trend.ADXIndicator(df["high"], df["low"], df["close"], window=window)
+    df["adx"] = adx_indicator.adx()
+    df["plus_di"] = adx_indicator.adx_pos()
+    df["minus_di"] = adx_indicator.adx_neg()
+    return df
+
+
+def calculate_obv(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate On Balance Volume (OBV).
+    """
+    if len(df) < 2:
+        df["obv"] = 0
+        return df
+
+    df["obv"] = ta.volume.on_balance_volume(df["close"], df["volume"])
+    return df
+
+
 def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """Add all technical indicators needed for the strategy."""
     if df.empty or len(df) < config.EMA_SLOW:
@@ -61,6 +190,11 @@ def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df["ema_fast"] = ta.trend.ema_indicator(df["close"], window=config.EMA_FAST)
     df["ema_slow"] = ta.trend.ema_indicator(df["close"], window=config.EMA_SLOW)
     df["trend_bullish"] = df["ema_fast"] > df["ema_slow"]
+
+    # EMA 9, 21, 50 for SmartStrategy
+    df["ema9"] = ta.trend.ema_indicator(df["close"], window=9)
+    df["ema21"] = ta.trend.ema_indicator(df["close"], window=21)
+    df["ema50"] = ta.trend.ema_indicator(df["close"], window=50)
 
     # === RSI ===
     df["rsi"] = ta.momentum.rsi(df["close"], window=config.RSI_PERIOD)
@@ -87,6 +221,8 @@ def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df["bb_lower"] = bb.bollinger_lband()
     df["bb_mid"] = bb.bollinger_mavg()
     df["bb_pct"] = bb.bollinger_pband()  # 0 = at lower, 1 = at upper
+    # BB width for squeeze detection
+    df["bb_width"] = (df["bb_upper"] - df["bb_lower"]) / df["bb_mid"]
 
     # === ATR (Average True Range) ===
     df["atr"] = ta.volatility.average_true_range(
@@ -111,7 +247,103 @@ def add_all_indicators(df: pd.DataFrame) -> pd.DataFrame:
     # Price position relative to VWAP
     df["above_vwap"] = df["close"] > df["vwap"]
 
+    # === SuperTrend ===
+    df = calculate_supertrend(df)
+
+    # === Ichimoku Cloud ===
+    df = calculate_ichimoku(df)
+
+    # === ADX / +DI / -DI ===
+    df = calculate_adx(df)
+
+    # === OBV ===
+    df = calculate_obv(df)
+
     return df
+
+
+def analyze_full(candles_df: pd.DataFrame) -> dict:
+    """
+    Full technical analysis on a DataFrame, returning a dict like the JS bot's
+    TechnicalAnalysis.analyze(). Expects df already has add_all_indicators() applied.
+    Returns dict with: price, rsi, macd, bb, atr, stochastic, adx, obv, vwap,
+                       supertrend, ema, ichimoku, volume, avgVolume, candles
+    """
+    if candles_df.empty or len(candles_df) < 10:
+        return {}
+
+    last = candles_df.iloc[-1]
+    prev = candles_df.iloc[-2] if len(candles_df) >= 2 else last
+
+    def safe(val, default=0):
+        """Safely convert to float, returning default if NaN."""
+        try:
+            v = float(val)
+            if np.isnan(v):
+                return default
+            return v
+        except (TypeError, ValueError):
+            return default
+
+    analysis = {
+        "price": safe(last.get("close")),
+        "open": safe(last.get("open")),
+        "high": safe(last.get("high")),
+        "low": safe(last.get("low")),
+        "close": safe(last.get("close")),
+        "rsi": safe(last.get("rsi"), 50),
+        "macd": {
+            "macd": safe(last.get("macd")),
+            "signal": safe(last.get("macd_signal")),
+            "histogram": safe(last.get("macd_hist")),
+            "prev_histogram": safe(last.get("macd_hist_prev")),
+        },
+        "bb": {
+            "upper": safe(last.get("bb_upper")),
+            "lower": safe(last.get("bb_lower")),
+            "mid": safe(last.get("bb_mid")),
+            "pct": safe(last.get("bb_pct"), 0.5),
+            "width": safe(last.get("bb_width"), 0.02),
+        },
+        "atr": safe(last.get("atr")),
+        "stochastic": {
+            "k": safe(last.get("stoch_k"), 50),
+            "d": safe(last.get("stoch_d"), 50),
+        },
+        "adx": {
+            "value": safe(last.get("adx"), 20),
+            "plus_di": safe(last.get("plus_di"), 0),
+            "minus_di": safe(last.get("minus_di"), 0),
+        },
+        "obv": safe(last.get("obv")),
+        "vwap": safe(last.get("vwap")),
+        "supertrend": {
+            "value": safe(last.get("supertrend")),
+            "direction": int(safe(last.get("supertrend_direction"), 1)),
+        },
+        "ema": {
+            "ema9": safe(last.get("ema9")),
+            "ema21": safe(last.get("ema21")),
+            "ema50": safe(last.get("ema50")),
+        },
+        "ichimoku": {
+            "tenkan": safe(last.get("tenkan_sen")),
+            "kijun": safe(last.get("kijun_sen")),
+            "spanA": safe(last.get("senkou_span_a")),
+            "spanB": safe(last.get("senkou_span_b")),
+        },
+        "volume": safe(last.get("volume")),
+        "avgVolume": safe(last.get("vol_ma")),
+        # Include last few candles for pattern detection
+        "candles": {
+            "last_green": safe(last.get("close")) > safe(last.get("open")),
+            "prev_green": safe(prev.get("close")) > safe(prev.get("open")),
+            "last_body": abs(safe(last.get("close")) - safe(last.get("open"))),
+            "last_range": safe(last.get("high")) - safe(last.get("low")),
+        },
+    }
+
+    return analysis
 
 
 def get_signal_strength(df: pd.DataFrame) -> dict:
