@@ -40,6 +40,9 @@ class SmartStrategy:
         # Cache (symbol_timeframe -> (df, fetch_time))
         self._cache = {}
         self._cache_ttl = {"5m": 20, "15m": 50, "1h": 120, "4h": 300}
+        # BTC trend cache for correlation veto on alts
+        self._btc_trend_cache = None
+        self._btc_trend_time = 0
 
     # ─── Data Fetching ──────────────────────────────────────────────────────
 
@@ -527,6 +530,96 @@ class SmartStrategy:
             return hour >= start or hour < end
         return start <= hour < end
 
+    def get_btc_trend(self) -> Optional[str]:
+        """
+        Return BTC 1h macro trend: 'STRONG_UP', 'UP', 'NEUTRAL', 'DOWN', 'STRONG_DOWN'.
+        Cached for 2 minutes to avoid spamming the API.
+        Used to veto counter-trend shorts on correlated alts.
+        """
+        now = time.time()
+        if self._btc_trend_cache and (now - self._btc_trend_time) < 120:
+            return self._btc_trend_cache
+
+        try:
+            df_btc_1h = self._get_data("BTCUSDT", "1h")
+            if df_btc_1h is None or df_btc_1h.empty:
+                return None
+            a = analyze_full(df_btc_1h)
+            if not a:
+                return None
+            ema = a.get("ema", {})
+            ema21 = ema.get("ema21", 0)
+            ema50 = ema.get("ema50", 0)
+            price = a.get("price", 0)
+            adx_data = a.get("adx", {})
+            adx_val = adx_data.get("value", 0)
+
+            if not (ema21 and ema50 and price):
+                return None
+
+            # Strong up: stacked EMAs + ADX > 25 + price clearly above EMA21 (>0.5%)
+            pct_above = (price - ema21) / ema21 * 100 if ema21 else 0
+            if ema21 > ema50 and pct_above > 0.5 and adx_val > 25:
+                trend = "STRONG_UP"
+            elif ema21 > ema50 and price > ema21:
+                trend = "UP"
+            elif ema21 < ema50 and pct_above < -0.5 and adx_val > 25:
+                trend = "STRONG_DOWN"
+            elif ema21 < ema50 and price < ema21:
+                trend = "DOWN"
+            else:
+                trend = "NEUTRAL"
+
+            self._btc_trend_cache = trend
+            self._btc_trend_time = now
+            return trend
+        except Exception:
+            return None
+
+    @staticmethod
+    def check_htf_veto(direction: str, mtf_analyses: dict) -> bool:
+        """
+        Hard veto against counter-trend trades.
+        Returns True if trade should be VETOED.
+
+        Veto SHORT if 4h is strongly bullish:
+          - 4h EMA21 > EMA50
+          - 4h price > EMA21 by more than 0.8%
+          - 4h ADX > 22 (trending, not chop)
+
+        Same logic (mirrored) for LONG in strong downtrends.
+        """
+        if not mtf_analyses:
+            return False
+
+        htf = mtf_analyses.get("4h")
+        if not htf:
+            return False
+
+        ema = htf.get("ema", {})
+        ema21 = ema.get("ema21", 0)
+        ema50 = ema.get("ema50", 0)
+        price = htf.get("price", 0)
+        adx_data = htf.get("adx", {})
+        adx_val = adx_data.get("value", 0)
+
+        if not (ema21 and ema50 and price):
+            return False
+
+        pct_from_ema = (price - ema21) / ema21 * 100
+
+        # Strong 4h uptrend
+        strong_up = (ema21 > ema50 and pct_from_ema > 0.8 and adx_val > 22)
+        # Strong 4h downtrend
+        strong_down = (ema21 < ema50 and pct_from_ema < -0.8 and adx_val > 22)
+
+        if direction == "SHORT" and strong_up:
+            return True
+        if direction == "LONG" and strong_down:
+            return True
+
+        return False
+
     @staticmethod
     def check_pullback_confirmation(analysis: dict, direction: str) -> bool:
         """In trending mode, last candle must confirm direction."""
@@ -586,7 +679,28 @@ class SmartStrategy:
         score = result["score"]
         confluence = result["confluence"]
 
-        # 4. ADX regime detection (from JS agent._scan)
+        # 4a. HARD HTF VETO — refuse counter-trend trades against strong 4h trend
+        # This is the main fix for ETH shorts getting steamrolled in uptrends
+        if self.check_htf_veto(direction, mtf_analyses):
+            return None
+
+        # 4b. BTC CORRELATION VETO — don't short alts when BTC is pumping
+        # ETH, SOL, XRP all correlate tightly with BTC; fighting BTC trend = losses
+        if symbol != "BTCUSDT":
+            btc_trend = self.get_btc_trend()
+            if btc_trend == "STRONG_UP" and direction == "SHORT":
+                return None
+            if btc_trend == "STRONG_DOWN" and direction == "LONG":
+                return None
+            # Soft filter: normal UP still requires extra confluence for alt shorts
+            if btc_trend == "UP" and direction == "SHORT":
+                if confluence < 4 or abs(score) < 50:
+                    return None
+            if btc_trend == "DOWN" and direction == "LONG":
+                if confluence < 4 or abs(score) < 50:
+                    return None
+
+        # 4c. ADX regime detection (from JS agent._scan)
         adx_data = analysis_15m.get("adx", {})
         adx_val = adx_data.get("value", 20)
         abs_score = abs(score)
