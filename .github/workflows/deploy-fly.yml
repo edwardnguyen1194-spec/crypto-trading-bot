@@ -8,12 +8,20 @@ on:
       - claude/crypto-trading-bot-CJhjV
     paths:
       - 'js-bot-v2/**'
+      - '.github/workflows/deploy-fly.yml'
   workflow_dispatch:  # Manual trigger from GitHub UI
+
+env:
+  FLY_APP: bitunix-crypto-agent-v2
+  FLY_REGION: iad
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ./js-bot-v2
 
     steps:
       - uses: actions/checkout@v4
@@ -21,32 +29,62 @@ jobs:
       - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Deploy to Fly.io
-        run: fly deploy --app bitunix-crypto-agent-v2 --remote-only
-        working-directory: ./js-bot-v2
+      - name: Create Fly app if it doesn't exist
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Set API secrets
         run: |
-          fly secrets set \
-            BITUNIX_API_KEY="${{ secrets.BITUNIX_API_KEY }}" \
-            BITUNIX_SECRET_KEY="${{ secrets.BITUNIX_SECRET_KEY }}" \
-            --app bitunix-crypto-agent-v2 \
-            --stage
+          if fly apps list --json 2>/dev/null | grep -q "\"Name\": *\"$FLY_APP\""; then
+            echo "App $FLY_APP already exists — skipping create"
+          else
+            echo "Creating app $FLY_APP..."
+            fly apps create "$FLY_APP" --org personal
+          fi
+
+      - name: Create persistent volume if missing
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-        continue-on-error: true  # Secrets may already be set
+        run: |
+          if fly volumes list --app "$FLY_APP" --json 2>/dev/null | grep -q '"name": *"bot_state"'; then
+            echo "Volume bot_state already exists — skipping create"
+          else
+            echo "Creating volume bot_state..."
+            fly volumes create bot_state --size 1 --region "$FLY_REGION" --app "$FLY_APP" --yes
+          fi
+
+      - name: Stage API secrets (applied on next deploy)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          BITUNIX_API_KEY: ${{ secrets.BITUNIX_API_KEY }}
+          BITUNIX_SECRET_KEY: ${{ secrets.BITUNIX_SECRET_KEY }}
+        run: |
+          if [ -n "$BITUNIX_API_KEY" ] && [ -n "$BITUNIX_SECRET_KEY" ]; then
+            fly secrets set \
+              BITUNIX_API_KEY="$BITUNIX_API_KEY" \
+              BITUNIX_SECRET_KEY="$BITUNIX_SECRET_KEY" \
+              --app "$FLY_APP" --stage
+            echo "Bitunix secrets staged"
+          else
+            echo "Bitunix secrets not set in GitHub — bot will run in DRY_RUN mode only"
+          fi
+
+      - name: Deploy to Fly.io
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          fly deploy \
+            --app "$FLY_APP" \
+            --remote-only \
+            --yes \
+            --wait-timeout 600
 
       - name: Show app status
-        run: fly status --app bitunix-crypto-agent-v2
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: fly status --app "$FLY_APP"
 
-      - name: Show app URL
+      - name: Print dashboard URL
         run: |
-          URL=$(fly info --app bitunix-crypto-agent-v2 --hostname 2>/dev/null || echo "bitunix-crypto-agent-v2.fly.dev")
-          echo "Bot v2 dashboard: https://$URL"
-          echo "Compare with live bot at: https://crypto-trading-bot-production-55b3.up.railway.app/"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          echo "============================================"
+          echo "Bot v2 dashboard: https://$FLY_APP.fly.dev"
+          echo "Compare with v1: https://crypto-trading-bot-production-55b3.up.railway.app/"
+          echo "============================================"
