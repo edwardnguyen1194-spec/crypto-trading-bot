@@ -29,16 +29,49 @@ jobs:
       - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Create Fly app if it doesn't exist
+      - name: Verify Fly auth
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
-          if fly apps list --json 2>/dev/null | grep -q "\"Name\": *\"$FLY_APP\""; then
-            echo "App $FLY_APP already exists — skipping create"
-          else
-            echo "Creating app $FLY_APP..."
-            fly apps create "$FLY_APP" --org personal
+          echo "=== flyctl version ==="
+          fly version
+          echo "=== whoami ==="
+          fly auth whoami || { echo "ERROR: FLY_API_TOKEN invalid or expired"; exit 1; }
+          echo "=== orgs ==="
+          fly orgs list || true
+
+      - name: Ensure Fly app exists
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set +e
+          echo "Checking if app $FLY_APP exists and is accessible..."
+          if fly status --app "$FLY_APP" >/dev/null 2>&1; then
+            echo "App $FLY_APP already exists and is accessible — skipping create"
+            exit 0
           fi
+          echo "App not found via fly status — attempting to create..."
+          CREATE_OUTPUT=$(fly apps create "$FLY_APP" 2>&1)
+          CREATE_EXIT=$?
+          echo "$CREATE_OUTPUT"
+          if [ $CREATE_EXIT -eq 0 ]; then
+            echo "App $FLY_APP created successfully"
+            exit 0
+          fi
+          # If creation failed because the name is already taken by someone else,
+          # we can't recover. Otherwise (e.g., we own it but status flaked), retry status.
+          if echo "$CREATE_OUTPUT" | grep -qi "taken\|already exists\|slug.*already"; then
+            echo "App name may already exist — rechecking with fly status..."
+            if fly status --app "$FLY_APP" >/dev/null 2>&1; then
+              echo "Confirmed: app exists and we own it"
+              exit 0
+            fi
+            echo "ERROR: App name '$FLY_APP' is taken by another account."
+            echo "Change FLY_APP in the workflow to a unique name and retry."
+            exit 1
+          fi
+          echo "ERROR: fly apps create failed for unknown reason"
+          exit 1
 
       - name: Create persistent volume if missing
         env:
