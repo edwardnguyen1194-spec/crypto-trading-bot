@@ -1,0 +1,52 @@
+name: Deploy JS Bot v2 to Fly.io
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - claude/crypto-trading-bot-CJhjV
+    paths:
+      - 'js-bot-v2/**'
+  workflow_dispatch:  # Manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: fly deploy --app bitunix-crypto-agent-v2 --remote-only
+        working-directory: ./js-bot-v2
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Set API secrets
+        run: |
+          fly secrets set \
+            BITUNIX_API_KEY="${{ secrets.BITUNIX_API_KEY }}" \
+            BITUNIX_SECRET_KEY="${{ secrets.BITUNIX_SECRET_KEY }}" \
+            --app bitunix-crypto-agent-v2 \
+            --stage
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        continue-on-error: true  # Secrets may already be set
+
+      - name: Show app status
+        run: fly status --app bitunix-crypto-agent-v2
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Show app URL
+        run: |
+          URL=$(fly info --app bitunix-crypto-agent-v2 --hostname 2>/dev/null || echo "bitunix-crypto-agent-v2.fly.dev")
+          echo "Bot v2 dashboard: https://$URL"
+          echo "Compare with live bot at: https://crypto-trading-bot-production-55b3.up.railway.app/"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
