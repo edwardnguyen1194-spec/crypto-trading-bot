@@ -17,6 +17,8 @@ class PositionManager extends EventEmitter {
     this.fundingRates = {};
     this.lastFundingTime = 0;
     this.totalFundingPaid = 0;
+    // Per-symbol entry cooldown (prevents spam re-entry within same candle)
+    this.lastEntryTime = new Map();
 
     // Check funding every 30 minutes
     setInterval(() => this._updateFundingRates(), 30 * 60 * 1000);
@@ -116,7 +118,43 @@ class PositionManager extends EventEmitter {
       return null;
     }
 
-    const price = analysis.price;
+    // Candle-bar cooldown: don't re-enter the same symbol within the same
+    // primary candle (prevents spam entries on stale signals between scans)
+    const candleCooldownMs = 15 * 60 * 1000; // 15m candle window
+    const lastEntry = this.lastEntryTime?.get?.(symbol) || 0;
+    if (Date.now() - lastEntry < candleCooldownMs) {
+      const waitMin = Math.ceil((candleCooldownMs - (Date.now() - lastEntry)) / 60000);
+      console.log(`[PM] Candle cooldown on ${symbol} (${waitMin}m remaining) — skipping re-entry`);
+      return null;
+    }
+
+    // ── CRITICAL: Fetch LIVE ticker price at moment of entry ──────────────
+    // Using analysis.price (the stale candle close) was causing fake TP hits
+    // when the live market had already moved past the computed TP level.
+    // Live price ensures entry reflects actual fillable market price.
+    let livePrice = null;
+    try {
+      const ticker = await this.client.getTicker(symbol);
+      const t = Array.isArray(ticker) ? ticker[0] : ticker;
+      livePrice = parseFloat(t?.lastPrice || t?.last || t?.markPrice || 0);
+    } catch (e) {
+      console.log(`[PM] Live ticker fetch failed for ${symbol}: ${e.message}`);
+    }
+    if (!livePrice || !isFinite(livePrice) || livePrice <= 0) {
+      // Fallback: use analysis.price, but warn loudly
+      console.log(`[PM] ⚠ Falling back to candle-close price for ${symbol} — live ticker unavailable`);
+      livePrice = analysis.price;
+    }
+
+    // Sanity check: if live price has drifted more than 1.5% from candle close,
+    // the signal is stale and TP/SL levels based on old price would be wrong.
+    const drift = Math.abs(livePrice - analysis.price) / analysis.price;
+    if (drift > 0.015) {
+      console.log(`[PM] ${symbol} signal rejected: live price $${livePrice.toFixed(4)} drifted ${(drift*100).toFixed(2)}% from candle close $${analysis.price.toFixed(4)}`);
+      return null;
+    }
+
+    const price = livePrice;  // ← use live market price, not analysis.price
     const atr = analysis.atr;
 
     // Calculate optimal leverage
@@ -196,9 +234,11 @@ class PositionManager extends EventEmitter {
 
       this.positions.set(symbol, position);
       this.risk.addPosition(symbol, { margin: sizing.margin });
+      // Stamp cooldown — blocks re-entry on this symbol within the candle window
+      this.lastEntryTime.set(symbol, Date.now());
 
       console.log(`[PM] ✓ OPENED ${direction} ${symbol}`);
-      console.log(`    Entry: $${price.toFixed(2)} | Size: ${sizing.quantity.toFixed(6)}`);
+      console.log(`    Entry: $${price.toFixed(2)} (live) | Size: ${sizing.quantity.toFixed(6)}`);
       console.log(`    Lev: ${leverage}x | Margin: $${sizing.margin.toFixed(2)}`);
       console.log(`    SL: $${levels.stopLoss.toFixed(2)} | TP: $${levels.takeProfit.toFixed(2)} (${levels.rrRatio.toFixed(1)}:1 R:R)`);
 

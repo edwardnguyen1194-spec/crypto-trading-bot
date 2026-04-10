@@ -41,11 +41,29 @@ class RiskManager {
     this.dailyLosses = 0;
     this.openPositions = new Map();
     this.tradeHistory = [];
-    // Seed trade history for accurate win rate
-    // Seed with old timestamps so they don't affect daily P&L
-    const oldTime = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days ago
-    for (let i = 0; i < prevWins; i++) this.tradeHistory.push({ pnl: 2.47, balance: this.bankroll, timestamp: oldTime });
-    for (let i = 0; i < prevLosses; i++) this.tradeHistory.push({ pnl: -2.50, balance: this.bankroll, timestamp: oldTime });
+    // NOTE: Previously this seeded tradeHistory with fake $2.47 wins and
+    // -$2.50 losses based on PREV_WINS / PREV_LOSSES env vars. That inflated
+    // the dashboard win rate with fabricated trades that had no real prices
+    // or times — a MAJOR source of the "97.2% WR" illusion on the old bot.
+    //
+    // If the user wants to carry over *counts* from a previous session for
+    // display purposes, we now track them as separate counters instead of
+    // polluting tradeHistory with synthetic trades.
+    const seedFakeTrades = process.env.SEED_FAKE_TRADES === 'true';
+    if (seedFakeTrades) {
+      // Explicit opt-in for legacy behavior (not recommended)
+      const oldTime = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      for (let i = 0; i < prevWins; i++) this.tradeHistory.push({ pnl: 2.47, balance: this.bankroll, timestamp: oldTime, synthetic: true });
+      for (let i = 0; i < prevLosses; i++) this.tradeHistory.push({ pnl: -2.50, balance: this.bankroll, timestamp: oldTime, synthetic: true });
+      console.log(`[RISK] ⚠ Seeded ${prevWins} synthetic wins + ${prevLosses} synthetic losses (SEED_FAKE_TRADES=true)`);
+    } else {
+      // Track carried-over counts separately so they don't corrupt real stats
+      this.carriedOverWins = prevWins;
+      this.carriedOverLosses = prevLosses;
+      if (prevWins > 0 || prevLosses > 0) {
+        console.log(`[RISK] Carried over from previous session: ${prevWins}W / ${prevLosses}L (display only, not in tradeHistory)`);
+      }
+    }
     this.peakBalance = prev.peakBalance || this.bankroll;
     this.currentBalance = this.bankroll;
     this.dayStartBalance = this.bankroll;
