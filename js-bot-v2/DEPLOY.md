@@ -1,5 +1,7 @@
 # Enhanced Crypto Bot v2 - Fly.io Deployment
 
+**Deployed via GitHub Actions.** Push to `claude/crypto-trading-bot-CJhjV` auto-deploys this folder.
+
 This is an enhanced version of the proven 94.8% WR crypto bot with additional features:
 
 ## What's New in v2
