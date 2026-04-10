@@ -1,0 +1,58 @@
+app = "bitunix-crypto-agent-v2"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  # Paper trading mode for safe comparison
+  DRY_RUN = "true"
+  # Starting bankroll: $200
+  BANKROLL = "200"
+  # Trading pairs
+  SYMBOLS = "BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT"
+  # Bitunix VIP Level 1 settings
+  MAX_LEVERAGE = "20"
+  DEFAULT_LEVERAGE = "10"
+  MAKER_FEE = "0.00018"
+  TAKER_FEE = "0.00055"
+  # Risk management
+  MAX_RISK_PER_TRADE = "0.02"
+  MAX_DAILY_LOSS = "0.10"
+  # Scanning
+  SCAN_INTERVAL = "30000"
+  MIN_CONFLUENCE = "3"
+  MIN_SCORE = "35"
+  # Dashboard
+  DASHBOARD_PORT = "3456"
+  NODE_ENV = "production"
+  # Reset state for fresh comparison start - v2 bot
+  PREV_WINS = "0"
+  PREV_LOSSES = "0"
+
+[http_service]
+  internal_port = 3456
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+[[mounts]]
+  source = "bot_state"
+  destination = "/app/data"
+
+[checks]
+  [checks.health]
+    type = "http"
+    port = 3456
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/"
