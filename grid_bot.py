@@ -27,7 +27,6 @@ import json
 import os
 import uuid
 import numpy as np
-import talib
 from typing import Optional, List
 from bitunix_client import BitunixClient
 from indicators import build_dataframe

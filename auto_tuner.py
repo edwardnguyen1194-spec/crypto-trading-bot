@@ -1,15 +1,20 @@
 """
 Auto-Tuner
 Monitors win rate in real-time and adjusts strategy parameters
-to maintain 88%+ WR. Runs inside the bot — no external monitoring needed.
+to maintain target 85%+ WR. Runs inside the bot — no external monitoring needed.
+
+Tunes for the Smart Strategy (5-strategy composite scoring):
+- MIN_COMPOSITE_SCORE: Minimum weighted score to trade
+- MIN_CONFLUENCE: Minimum strategies agreeing
+- TP_ATR_MULT: Take profit ATR multiplier
+- SL_ATR_MULT: Stop loss ATR multiplier
+- BREAKEVEN_ATR: Breakeven move threshold
 """
 
 import time
-import json
-import os
 
 # Thresholds
-TARGET_WR = 88.0
+TARGET_WR = 85.0
 MIN_TRADES_TO_EVALUATE = 10  # need at least 10 trades before tuning
 CHECK_INTERVAL_TRADES = 5     # re-evaluate every 5 new trades
 
@@ -23,40 +28,31 @@ class AutoTuner:
         self.adjustments_made = []
         self.current_level = 0  # 0=normal, 1=tight, 2=very tight
 
-        # Tuning levels — progressively stricter
+        # Tuning levels — progressively stricter for higher WR
         self.levels = [
-            {  # Level 0: Normal (current settings)
+            {  # Level 0: Normal
                 "name": "Normal",
-                "min_confluence": 4,
-                "rsi_long": (25, 50),
-                "rsi_short": (50, 75),
-                "bb_long_threshold": 0.30,
-                "bb_short_threshold": 0.70,
-                "volume_mult": 1.2,
-                "stoch_oversold": 0.35,
-                "stoch_overbought": 0.65,
+                "min_composite_score": 35,
+                "min_confluence": 3,
+                "tp_atr_mult": 1.5,
+                "sl_atr_mult": 2.5,
+                "breakeven_atr": 0.5,
             },
-            {  # Level 1: Tight — if WR drops below 88%
+            {  # Level 1: Tight
                 "name": "Tight",
+                "min_composite_score": 45,
                 "min_confluence": 4,
-                "rsi_long": (28, 48),
-                "rsi_short": (52, 72),
-                "bb_long_threshold": 0.25,
-                "bb_short_threshold": 0.75,
-                "volume_mult": 1.3,
-                "stoch_oversold": 0.30,
-                "stoch_overbought": 0.70,
+                "tp_atr_mult": 1.2,
+                "sl_atr_mult": 3.0,
+                "breakeven_atr": 0.6,
             },
-            {  # Level 2: Very Tight — if WR still below 88%
+            {  # Level 2: Very Tight
                 "name": "Very Tight",
-                "min_confluence": 5,
-                "rsi_long": (30, 45),
-                "rsi_short": (55, 70),
-                "bb_long_threshold": 0.20,
-                "bb_short_threshold": 0.80,
-                "volume_mult": 1.4,
-                "stoch_oversold": 0.25,
-                "stoch_overbought": 0.75,
+                "min_composite_score": 55,
+                "min_confluence": 4,
+                "tp_atr_mult": 1.0,
+                "sl_atr_mult": 3.5,
+                "breakeven_atr": 0.7,
             },
         ]
 
@@ -128,9 +124,11 @@ class AutoTuner:
         import config
         level = self.levels[self.current_level]
 
-        config.RSI_LONG_ZONE = level["rsi_long"]
-        config.RSI_SHORT_ZONE = level["rsi_short"]
-        config.VOLUME_SPIKE_MULT = level["volume_mult"]
+        config.MIN_COMPOSITE_SCORE = level["min_composite_score"]
+        config.MIN_CONFLUENCE = level["min_confluence"]
+        config.TP_ATR_MULT = level["tp_atr_mult"]
+        config.SL_ATR_MULT = level["sl_atr_mult"]
+        config.BREAKEVEN_ATR = level["breakeven_atr"]
 
     def get_current_settings(self) -> dict:
         """Return current tuning level settings."""
@@ -145,12 +143,6 @@ class AutoTuner:
         """Get the current minimum confluence requirement."""
         return self.levels[self.current_level]["min_confluence"]
 
-    def get_bb_thresholds(self) -> tuple:
-        """Get current Bollinger Band thresholds (long, short)."""
-        level = self.levels[self.current_level]
-        return level["bb_long_threshold"], level["bb_short_threshold"]
-
-    def get_stoch_thresholds(self) -> tuple:
-        """Get current StochRSI thresholds (oversold, overbought)."""
-        level = self.levels[self.current_level]
-        return level["stoch_oversold"], level["stoch_overbought"]
+    def get_min_composite_score(self) -> float:
+        """Get the current minimum composite score requirement."""
+        return self.levels[self.current_level]["min_composite_score"]

@@ -10,8 +10,8 @@ import uuid
 import os
 from typing import Optional
 from bitunix_client import BitunixClient
-from dual_mode_strategy import DualModeStrategy
-from god_mode_exits import calculate_smart_exit
+from smart_strategy import SmartStrategy
+from exit_manager import ExitManager
 from strategy import Signal
 from risk_manager import RiskManager
 import config
@@ -24,7 +24,7 @@ class PaperTrader:
         self.bot_name = bot_config["name"]
         self.leverage = bot_config["leverage"]
         self.client = client
-        self.strategy = DualModeStrategy(client)  # DUAL MODE: mean reversion + trend pullback
+        self.strategy = SmartStrategy(client)  # SMART: 5-strategy weighted composite (94.8% WR from JS)
         self.risk = RiskManager(
             bot_name=self.bot_name,
             leverage=self.leverage,

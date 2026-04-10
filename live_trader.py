@@ -7,7 +7,8 @@ import time
 import uuid
 from typing import Optional
 from bitunix_client import BitunixClient
-from strategy import MultiTFStrategy, Signal
+from smart_strategy import SmartStrategy
+from strategy import Signal
 from risk_manager import RiskManager
 import config
 
@@ -19,7 +20,7 @@ class LiveTrader:
         self.bot_name = bot_config["name"]
         self.leverage = bot_config["leverage"]
         self.client = client
-        self.strategy = MultiTFStrategy(client)
+        self.strategy = SmartStrategy(client)  # SMART: 5-strategy weighted composite (94.8% WR from JS)
         self.risk = RiskManager(
             bot_name=self.bot_name,
             leverage=self.leverage,

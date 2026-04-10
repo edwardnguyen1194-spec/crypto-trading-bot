@@ -1,6 +1,7 @@
 """
 Bot Manager
 Runs 4 bots in parallel (20x, 30x, 40x, 50x) with shared market data.
+Includes state persistence: saves/loads bot state to/from JSON files.
 """
 
 import asyncio
@@ -18,6 +19,8 @@ import config
 class BotManager:
     """Manages multiple trading bots running concurrently."""
 
+    STATE_FILE_PREFIX = "state_"
+
     def __init__(self, mode: str = "paper", specific_leverage: int = None):
         """
         mode: 'paper' or 'live'
@@ -29,7 +32,7 @@ class BotManager:
         self.running = False
         self.cycle_count = 0
         self.start_time = None
-        self.tuner = AutoTuner(target_wr=88.0)
+        self.tuner = AutoTuner(target_wr=85.0)
 
         # Initialize bots
         bot_configs = config.BOTS
@@ -42,6 +45,73 @@ class BotManager:
             else:
                 bot = LiveTrader(bot_cfg, self.client)
             self.bots.append(bot)
+
+        # Try to load persisted state on startup
+        self.load_state()
+
+    # ─── State Persistence ──────────────────────────────────────────────
+
+    def _state_path(self, bot_name: str) -> str:
+        return os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            f"{self.STATE_FILE_PREFIX}{bot_name}.json",
+        )
+
+    def save_state(self):
+        """Save all bot states to JSON files (survives restarts)."""
+        for bot in self.bots:
+            try:
+                state = {
+                    "bot_name": bot.bot_name,
+                    "leverage": bot.leverage,
+                    "allocation": bot.risk.allocation,
+                    "initial_allocation": bot.risk.initial_allocation,
+                    "daily_trades": bot.risk.daily_trades,
+                    "daily_pnl": bot.risk.daily_pnl,
+                    "daily_reset_time": bot.risk.daily_reset_time,
+                    "paused": bot.risk.paused,
+                    "consecutive_losses": bot.risk.consecutive_losses,
+                    "cooldown_until": bot.risk.cooldown_until,
+                    "open_positions": bot.risk.open_positions,
+                    "trade_history": getattr(bot, "trade_history", []),
+                    "saved_at": time.time(),
+                }
+                path = self._state_path(bot.bot_name)
+                with open(path, "w") as f:
+                    json.dump(state, f, indent=2, default=str)
+            except Exception as e:
+                print(f"[BotManager] Failed to save state for {bot.bot_name}: {e}")
+
+    def load_state(self):
+        """Load bot states from JSON files if they exist."""
+        for bot in self.bots:
+            path = self._state_path(bot.bot_name)
+            if not os.path.exists(path):
+                continue
+            try:
+                with open(path, "r") as f:
+                    state = json.load(f)
+
+                bot.risk.allocation = state.get("allocation", bot.risk.allocation)
+                bot.risk.initial_allocation = state.get("initial_allocation", bot.risk.initial_allocation)
+                bot.risk.daily_trades = state.get("daily_trades", 0)
+                bot.risk.daily_pnl = state.get("daily_pnl", 0.0)
+                bot.risk.daily_reset_time = state.get("daily_reset_time", bot.risk.daily_reset_time)
+                bot.risk.paused = state.get("paused", False)
+                bot.risk.consecutive_losses = state.get("consecutive_losses", 0)
+                bot.risk.cooldown_until = state.get("cooldown_until", 0)
+                # Only load open positions; closed positions stay in trade_history
+                all_positions = state.get("open_positions", {})
+                bot.risk.open_positions = {
+                    pid: p for pid, p in all_positions.items()
+                }
+                if hasattr(bot, "trade_history"):
+                    bot.trade_history = state.get("trade_history", [])
+                print(f"[BotManager] Loaded state for {bot.bot_name} (alloc=${bot.risk.allocation:.2f})")
+            except Exception as e:
+                print(f"[BotManager] Failed to load state for {bot.bot_name}: {e}")
+
+    # ─── Core Loop ──────────────────────────────────────────────────────
 
     def tick_all(self) -> list:
         """Run one tick for all bots sequentially."""
@@ -75,6 +145,9 @@ class BotManager:
             if hasattr(bot, 'save_trades'):
                 bot.save_trades()
 
+        # Save state files (for restart resilience)
+        self.save_state()
+
         # Save combined report
         report = {
             "mode": self.mode,
@@ -98,6 +171,7 @@ class BotManager:
 
         print(f"\n{'='*60}")
         print(f"  Starting {self.mode.upper()} Trading - {len(self.bots)} bots")
+        print(f"  Strategy: SmartStrategy (5-strategy composite)")
         print(f"  Pairs: {', '.join(config.TRADING_PAIRS)}")
         print(f"  Bots: {', '.join(b.bot_name for b in self.bots)}")
         print(f"  Scan interval: {interval}s")

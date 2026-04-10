@@ -1,12 +1,76 @@
 """
 ULTIMATE BACKTEST - Test EVERYTHING, find what ACTUALLY works.
 Tests 500+ combinations across multiple strategies and timeframes.
+
+NOTE: This file previously required `talib` (C library). It now uses the
+`ta` Python library instead via a compatibility shim, so it runs anywhere.
 """
 import numpy as np
-import talib
 import json
 from bitunix_client import BitunixClient
 from indicators import build_dataframe
+
+# Compatibility shim - redirect talib calls to `ta` library equivalents
+try:
+    import talib  # type: ignore
+except ImportError:
+    import pandas as pd
+    import ta
+
+    class _TalibShim:
+        @staticmethod
+        def ATR(h, l, c, timeperiod=14):
+            return ta.volatility.average_true_range(
+                pd.Series(h), pd.Series(l), pd.Series(c), window=timeperiod
+            ).values
+
+        @staticmethod
+        def RSI(c, timeperiod=14):
+            return ta.momentum.rsi(pd.Series(c), window=timeperiod).values
+
+        @staticmethod
+        def EMA(c, timeperiod=14):
+            return ta.trend.ema_indicator(pd.Series(c), window=timeperiod).values
+
+        @staticmethod
+        def SMA(c, timeperiod=14):
+            return ta.trend.sma_indicator(pd.Series(c), window=timeperiod).values
+
+        @staticmethod
+        def BBANDS(c, timeperiod=20, nbdevup=2, nbdevdn=2):
+            bb = ta.volatility.BollingerBands(pd.Series(c), window=timeperiod, window_dev=nbdevup)
+            return bb.bollinger_hband().values, bb.bollinger_mavg().values, bb.bollinger_lband().values
+
+        @staticmethod
+        def ADX(h, l, c, timeperiod=14):
+            adx = ta.trend.ADXIndicator(pd.Series(h), pd.Series(l), pd.Series(c), window=timeperiod)
+            return adx.adx().values
+
+        @staticmethod
+        def PLUS_DI(h, l, c, timeperiod=14):
+            adx = ta.trend.ADXIndicator(pd.Series(h), pd.Series(l), pd.Series(c), window=timeperiod)
+            return adx.adx_pos().values
+
+        @staticmethod
+        def MINUS_DI(h, l, c, timeperiod=14):
+            adx = ta.trend.ADXIndicator(pd.Series(h), pd.Series(l), pd.Series(c), window=timeperiod)
+            return adx.adx_neg().values
+
+        @staticmethod
+        def MACD(c, fastperiod=12, slowperiod=26, signalperiod=9):
+            m = ta.trend.MACD(pd.Series(c), window_slow=slowperiod, window_fast=fastperiod, window_sign=signalperiod)
+            return m.macd().values, m.macd_signal().values, m.macd_diff().values
+
+        @staticmethod
+        def _zeros(c):
+            return np.zeros(len(c), dtype=np.float64)
+
+        # Pattern recognizers — we don't have them in `ta`, so return zeros
+        CDLHAMMER = staticmethod(lambda o, h, l, c: np.zeros(len(c)))
+        CDLENGULFING = staticmethod(lambda o, h, l, c: np.zeros(len(c)))
+        CDLDOJI = staticmethod(lambda o, h, l, c: np.zeros(len(c)))
+
+    talib = _TalibShim()
 
 client = BitunixClient()
 
